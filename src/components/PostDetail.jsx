@@ -60,6 +60,14 @@ function PostDetail() {
           {post.content}
         </p>
 
+        {post.imageUrl && (
+          <img
+            src={post.imageUrl}
+            alt="첨부 이미지"
+            style={{width: '100%', maxHeight: '400px', objectFit: 'cover', borderRadius: '12px', marginBottom: '32px'}}
+          />
+        )}
+
         <hr style={{ border: 'none', borderTop: '1px solid #f0f0f0', margin: '32px 0' }} />
 
         {/* 버튼 */}
