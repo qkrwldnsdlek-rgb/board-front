@@ -69,7 +69,7 @@ function PostDetail() {
                 alt="첨부 이미지"
                 onClick={() => setShowModal(true)}
                 style={{
-                  maxWidth: '100%', maxHeight: '500px',
+                  maxWidth: '60%', maxHeight: '300px',
                   objectFit: 'contain', borderRadius: '12px',
                   cursor: 'zoom-in', boxShadow: '0 2px 12px rgba(0,0,0,0.1)'
                 }}
