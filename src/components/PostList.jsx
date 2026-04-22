@@ -4,16 +4,24 @@ import api from '../api';
 
 function PostList() {
   const [posts, setPosts] = useState([]);
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.get('/posts').then(res => setPosts(res.data));
-  }, []);
+    api.get(`/posts?page=${page}&size=10`).then(res => {
+      setPosts(res.data.content);
+      setTotalPages(res.data.totalPages);
+    });
+  }, [page]);
 
   const handleDelete = (id) => {
     if (window.confirm('삭제하시겠습니까?')) {
       api.delete(`/posts/${id}`).then(() => {
-        setPosts(posts.filter(post => post.id !== id));
+        api.get(`/posts?page=${page}&size=10`).then(res => {
+          setPosts(res.data.content);
+          setTotalPages(res.data.totalPages);
+        });
       });
     }
   };
@@ -50,7 +58,7 @@ function PostList() {
                   onMouseEnter={e => e.currentTarget.style.background = '#fafafa'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
-                  <td style={{padding: '14px', textAlign: 'center', color: '#999'}}>{index + 1}</td>
+                  <td style={{padding: '14px', textAlign: 'center', color: '#999'}}>{page * 10 + index + 1}</td>
                   <td style={{padding: '14px'}}>
                     <span onClick={() => navigate(`/posts/${post.id}`)}
                       style={{cursor: 'pointer', color: '#3d3d3d', fontWeight: '500'}}
@@ -73,6 +81,33 @@ function PostList() {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* 페이징 버튼 */}
+      <div style={{display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '24px'}}>
+        <button
+          onClick={() => setPage(page - 1)}
+          disabled={page === 0}
+          style={{backgroundColor: page === 0 ? '#eee' : '#5c6bc0', color: page === 0 ? '#aaa' : '#fff', fontWeight: '600', padding: '8px 16px'}}
+        >
+          이전
+        </button>
+        {Array.from({length: totalPages}, (_, i) => (
+          <button
+            key={i}
+            onClick={() => setPage(i)}
+            style={{backgroundColor: page === i ? '#5c6bc0' : '#e8eaf6', color: page === i ? '#fff' : '#5c6bc0', fontWeight: '600', padding: '8px 14px'}}
+          >
+            {i + 1}
+          </button>
+        ))}
+        <button
+          onClick={() => setPage(page + 1)}
+          disabled={page === totalPages - 1}
+          style={{backgroundColor: page === totalPages - 1 ? '#eee' : '#5c6bc0', color: page === totalPages - 1 ? '#aaa' : '#fff', fontWeight: '600', padding: '8px 16px'}}
+        >
+          다음
+        </button>
       </div>
     </div>
   );
