@@ -47,6 +47,7 @@ function PostDetail() {
         }}>
           <span>👤 {post.author}</span>
           <span>📅 {new Date(post.createdAt).toLocaleDateString()}</span>
+          <span>👀 {post.viewCount}</span>
         </div>
 
         <hr style={{ border: 'none', borderTop: '1px solid #f0f0f0', marginBottom: '32px' }} />
