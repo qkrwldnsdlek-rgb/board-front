@@ -73,6 +73,7 @@ function PostList() {
             <tr style={{backgroundColor: '#f0f2ff', color: '#5c6bc0'}}>
               <th style={{padding: '14px', textAlign: 'center', width: '60px'}}>번호</th>
               <th style={{padding: '14px', textAlign: 'left'}}>제목</th>
+              <th style={{padding: '14px', textAlign: 'center', width: '80px'}}>이미지</th>
               <th style={{padding: '14px', textAlign: 'center', width: '100px'}}>작성자</th>
               <th style={{padding: '14px', textAlign: 'center', width: '120px'}}>작성일</th>
               <th style={{padding: '14px', textAlign: 'center', width: '80px'}}>조회수</th>
@@ -82,7 +83,7 @@ function PostList() {
           <tbody>
             {posts.length === 0 ? (
               <tr>
-                <td colSpan={5} style={{textAlign: 'center', padding: '40px', color: '#aaa'}}>
+                <td colSpan={7} style={{textAlign: 'center', padding: '40px', color: '#aaa'}}>
                   {keyword ? `"${keyword}" 검색 결과가 없습니다.` : '게시글이 없습니다.'}
                 </td>
               </tr>
@@ -101,6 +102,15 @@ function PostList() {
                     >
                       {post.title}
                     </span>
+                  </td>
+                  <td style={{padding: '14px', textAlign: 'center'}}>
+                    {post.imageUrl ? (
+                      <img src={post.imageUrl} alt="썸네일"
+                        style={{width: '50px', height: '50px', objectFit: 'cover', borderRadius: '6px'}}
+                      />
+                    ) : (
+                      <span style={{color: '#ddd', fontSize: '12px'}}>없음</span>
+                    )}
                   </td>
                   <td style={{padding: '14px', textAlign: 'center', color: '#666'}}>{post.author}</td>
                   <td style={{padding: '14px', textAlign: 'center', color: '#999', fontSize: '13px'}}>
