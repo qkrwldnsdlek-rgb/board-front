@@ -6,19 +6,26 @@ function PostList() {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [keyword, setKeyword] = useState('');
+  const [searchInput, setSearchInput] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.get(`/posts?page=${page}&size=10`).then(res => {
+    api.get(`/posts?page=${page}&size=10${keyword ? `&keyword=${keyword}` : ''}`).then(res => {
       setPosts(res.data.content);
       setTotalPages(res.data.totalPages);
     });
-  }, [page]);
+  }, [page, keyword]);
+
+  const handleSearch = () => {
+    setPage(0);
+    setKeyword(searchInput);
+  };
 
   const handleDelete = (id) => {
     if (window.confirm('삭제하시겠습니까?')) {
       api.delete(`/posts/${id}`).then(() => {
-        api.get(`/posts?page=${page}&size=10`).then(res => {
+        api.get(`/posts?page=${page}&size=10${keyword ? `&keyword=${keyword}` : ''}`).then(res => {
           setPosts(res.data.content);
           setTotalPages(res.data.totalPages);
         });
@@ -34,6 +41,32 @@ function PostList() {
           + 글쓰기
         </button>
       </div>
+
+      {/* 검색창 */}
+      <div style={{display: 'flex', gap: '8px', marginBottom: '16px'}}>
+        <input
+          value={searchInput}
+          onChange={e => setSearchInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && handleSearch()}
+          placeholder="제목으로 검색..."
+          style={{flex: 1, padding: '10px 14px', borderRadius: '10px', border: '1.5px solid #e0e0e0', fontSize: '15px'}}
+        />
+        <button
+          onClick={handleSearch}
+          style={{backgroundColor: '#5c6bc0', color: '#fff', padding: '10px 20px', borderRadius: '10px', fontWeight: '600'}}
+        >
+          검색
+        </button>
+        {keyword && (
+          <button
+            onClick={() => { setKeyword(''); setSearchInput(''); setPage(0); }}
+            style={{backgroundColor: '#f5f5f5', color: '#888', padding: '10px 16px', borderRadius: '10px', fontWeight: '600'}}
+          >
+            초기화
+          </button>
+        )}
+      </div>
+
       <div style={{backgroundColor: '#fff', borderRadius: '16px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', overflow: 'hidden'}}>
         <table style={{width: '100%', borderCollapse: 'collapse'}}>
           <thead>
@@ -49,7 +82,7 @@ function PostList() {
             {posts.length === 0 ? (
               <tr>
                 <td colSpan={5} style={{textAlign: 'center', padding: '40px', color: '#aaa'}}>
-                  게시글이 없습니다.
+                  {keyword ? `"${keyword}" 검색 결과가 없습니다.` : '게시글이 없습니다.'}
                 </td>
               </tr>
             ) : (
@@ -103,8 +136,8 @@ function PostList() {
         ))}
         <button
           onClick={() => setPage(page + 1)}
-          disabled={page === totalPages - 1}
-          style={{backgroundColor: page === totalPages - 1 ? '#eee' : '#5c6bc0', color: page === totalPages - 1 ? '#aaa' : '#fff', fontWeight: '600', padding: '8px 16px'}}
+          disabled={page === totalPages - 1 || totalPages === 0}
+          style={{backgroundColor: page === totalPages - 1 || totalPages === 0 ? '#eee' : '#5c6bc0', color: page === totalPages - 1 || totalPages === 0 ? '#aaa' : '#fff', fontWeight: '600', padding: '8px 16px'}}
         >
           다음
         </button>
