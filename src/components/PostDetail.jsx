@@ -63,13 +63,13 @@ function PostDetail() {
 
         {post.imageUrl && (
           <>
-            <div style={{textAlign: 'center', marginBottom: '32px'}}>
+            <div style={{marginBottom: '32px'}}>
               <img
                 src={post.imageUrl}
                 alt="첨부 이미지"
                 onClick={() => setShowModal(true)}
                 style={{
-                  maxWidth: '60%', maxHeight: '300px',
+                  maxWidth: '100%', maxHeight: '500px',
                   objectFit: 'contain', borderRadius: '12px',
                   cursor: 'zoom-in', boxShadow: '0 2px 12px rgba(0,0,0,0.1)'
                 }}
