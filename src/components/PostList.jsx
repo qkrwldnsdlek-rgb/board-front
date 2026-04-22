@@ -104,12 +104,10 @@ function PostList() {
                     </span>
                   </td>
                   <td style={{padding: '14px', textAlign: 'center'}}>
-                    {post.imageUrl ? (
+                    {post.imageUrl && (
                       <img src={post.imageUrl} alt="썸네일"
                         style={{width: '50px', height: '50px', objectFit: 'cover', borderRadius: '6px'}}
                       />
-                    ) : (
-                      <span style={{color: '#ddd', fontSize: '12px'}}>없음</span>
                     )}
                   </td>
                   <td style={{padding: '14px', textAlign: 'center', color: '#666'}}>{post.author}</td>
