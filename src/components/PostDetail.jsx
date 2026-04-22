@@ -64,7 +64,7 @@ function PostDetail() {
           <img
             src={post.imageUrl}
             alt="첨부 이미지"
-            style={{width: '100%', maxHeight: '400px', objectFit: 'cover', borderRadius: '12px', marginBottom: '32px'}}
+            style={{width: '100%', maxHeight: '400px', objectFit: 'contain', borderRadius: '12px', marginBottom: '32px'}}
           />
         )}
 
