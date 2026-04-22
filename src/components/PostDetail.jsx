@@ -6,6 +6,7 @@ function PostDetail() {
   const { id } = useParams();
   const [post, setPost] = useState(null);
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     api.get(`/posts/${id}`).then(res => setPost(res.data));
@@ -61,11 +62,45 @@ function PostDetail() {
         </p>
 
         {post.imageUrl && (
-          <img
-            src={post.imageUrl}
-            alt="첨부 이미지"
-            style={{width: '100%', maxHeight: '400px', objectFit: 'contain', borderRadius: '12px', marginBottom: '32px'}}
-          />
+          <>
+            <div style={{textAlign: 'center', marginBottom: '32px'}}>
+              <img
+                src={post.imageUrl}
+                alt="첨부 이미지"
+                onClick={() => setShowModal(true)}
+                style={{
+                  maxWidth: '100%', maxHeight: '500px',
+                  objectFit: 'contain', borderRadius: '12px',
+                  cursor: 'zoom-in', boxShadow: '0 2px 12px rgba(0,0,0,0.1)'
+                }}
+              />
+            </div>
+
+            {/* 이미지 모달 */}
+            {showModal && (
+              <div
+                onClick={() => setShowModal(false)}
+                style={{
+                  position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                  backgroundColor: 'rgba(0,0,0,0.85)', zIndex: 9999,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'zoom-out'
+                }}
+              >
+                <img
+                  src={post.imageUrl}
+                  alt="첨부 이미지"
+                  style={{maxWidth: '90%', maxHeight: '90vh', objectFit: 'contain', borderRadius: '8px'}}
+                />
+                <div style={{
+                  position: 'absolute', top: '20px', right: '30px',
+                  color: '#fff', fontSize: '36px', cursor: 'pointer', fontWeight: '300'
+                }}>
+                  ✕
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         <hr style={{ border: 'none', borderTop: '1px solid #f0f0f0', margin: '32px 0' }} />
