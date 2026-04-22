@@ -117,7 +117,7 @@ function PostList() {
                   <td style={{padding: '14px', textAlign: 'center', color: '#999', fontSize: '13px'}}>
                     👀 {post.viewCount}
                   </td>
-                  <td style={{padding: '14px', textAlign: 'center'}}>
+                  <td style={{padding: '14px', textAlign: 'center', whiteSpace: 'nowrap'}}>
                     <button onClick={() => navigate(`/posts/${post.id}/edit`)} style={{backgroundColor: '#e8eaf6', color: '#5c6bc0', marginRight: '6px', fontWeight: '600'}}>수정</button>
                     <button onClick={() => handleDelete(post.id)} style={{backgroundColor: '#fce4ec', color: '#e57373', fontWeight: '600'}}>삭제</button>
                   </td>
