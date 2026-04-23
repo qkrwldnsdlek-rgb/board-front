@@ -55,7 +55,7 @@ function PostForm() {
       return null;
     }
 
-    const fileName = `${Date.now()}_${imageFile.name}`;
+    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${imageFile.name.split('.').pop()}`;
     const { error } = await supabase.storage
       .from('board-images')
       .upload(fileName, imageFile, {
