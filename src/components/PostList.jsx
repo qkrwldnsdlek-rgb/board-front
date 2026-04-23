@@ -94,7 +94,7 @@ function PostList() {
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
                   <td data-label="번호" style={{padding: '14px', textAlign: 'center', color: '#999'}}>{page * 10 + index + 1}</td>
-                  <td data-label="제목" style={{padding: '14px'}}>
+                  <td data-label="제목" style={{padding: '14px', fontWeight: 'bold'}}>
                     <span onClick={() => navigate(`/posts/${post.id}`)}
                       style={{cursor: 'pointer', color: '#3d3d3d', fontWeight: '500'}}
                       onMouseEnter={e => e.target.style.color = '#5c6bc0'}
@@ -114,7 +114,7 @@ function PostList() {
                   <td data-label="작성일" style={{padding: '14px', textAlign: 'center', color: '#999', fontSize: '13px'}}>
                     {new Date(post.createdAt).toLocaleDateString()}
                   </td>
-                  <td data-label="작성일" style={{padding: '14px', textAlign: 'center', color: '#999', fontSize: '13px'}}>
+                  <td data-label="조회수" style={{padding: '14px', textAlign: 'center', color: '#999', fontSize: '13px'}}>
                     👀 {post.viewCount}
                   </td>
                   <td data-label="관리" style={{padding: '14px', textAlign: 'center', whiteSpace: 'nowrap'}}>

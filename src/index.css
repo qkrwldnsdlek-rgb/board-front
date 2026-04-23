@@ -63,7 +63,7 @@ input:focus, textarea:focus {
     margin-left: 0 !important;
   }
 
-    table thead {
+  table thead {
     display: none;
   }
 
@@ -78,11 +78,13 @@ input:focus, textarea:focus {
 
   table td {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start !important;
     align-items: center;
-    padding: 6px 0 !important;
+    gap: 8px;
+    padding: 6px 4px !important;
     border: none !important;
     font-size: 14px;
+    text-align: left !important;
   }
 
   table td::before {
@@ -91,11 +93,6 @@ input:focus, textarea:focus {
     color: #999;
     font-size: 12px;
     min-width: 60px;
+    text-align: left;
   }
-
-  table td:last-child {
-    justify-content: flex-end !important;
-    gap: 8px;
-  }
-  
 }
