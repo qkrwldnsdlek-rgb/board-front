@@ -93,8 +93,8 @@ function PostList() {
                   onMouseEnter={e => e.currentTarget.style.background = '#fafafa'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
-                  <td style={{padding: '14px', textAlign: 'center', color: '#999'}}>{page * 10 + index + 1}</td>
-                  <td style={{padding: '14px'}}>
+                  <td data-label="번호" style={{padding: '14px', textAlign: 'center', color: '#999'}}>{page * 10 + index + 1}</td>
+                  <td data-label="제목" style={{padding: '14px'}}>
                     <span onClick={() => navigate(`/posts/${post.id}`)}
                       style={{cursor: 'pointer', color: '#3d3d3d', fontWeight: '500'}}
                       onMouseEnter={e => e.target.style.color = '#5c6bc0'}
@@ -103,21 +103,21 @@ function PostList() {
                       {post.title}
                     </span>
                   </td>
-                  <td style={{padding: '14px', textAlign: 'center'}}>
+                  <td data-label="이미지" style={{padding: '14px', textAlign: 'center'}}>
                     {post.imageUrl && (
                       <img src={post.imageUrl} alt="썸네일"
                         style={{width: '50px', height: '50px', objectFit: 'cover', borderRadius: '6px'}}
                       />
                     )}
                   </td>
-                  <td style={{padding: '14px', textAlign: 'center', color: '#666'}}>{post.author}</td>
-                  <td style={{padding: '14px', textAlign: 'center', color: '#999', fontSize: '13px'}}>
+                  <td data-label="작성자" style={{padding: '14px', textAlign: 'center', color: '#666'}}>{post.author}</td>
+                  <td data-label="작성일" style={{padding: '14px', textAlign: 'center', color: '#999', fontSize: '13px'}}>
                     {new Date(post.createdAt).toLocaleDateString()}
                   </td>
-                  <td style={{padding: '14px', textAlign: 'center', color: '#999', fontSize: '13px'}}>
+                  <td data-label="작성일" style={{padding: '14px', textAlign: 'center', color: '#999', fontSize: '13px'}}>
                     👀 {post.viewCount}
                   </td>
-                  <td style={{padding: '14px', textAlign: 'center', whiteSpace: 'nowrap'}}>
+                  <td data-label="관리" style={{padding: '14px', textAlign: 'center', whiteSpace: 'nowrap'}}>
                     <button onClick={() => navigate(`/posts/${post.id}/edit`)} style={{backgroundColor: '#e8eaf6', color: '#5c6bc0', marginRight: '6px', fontWeight: '600'}}>수정</button>
                     <button onClick={() => handleDelete(post.id)} style={{backgroundColor: '#fce4ec', color: '#e57373', fontWeight: '600'}}>삭제</button>
                   </td>
