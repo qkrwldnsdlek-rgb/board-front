@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useState } from 'react';
 import PostList from './components/PostList';
 import PostDetail from './components/PostDetail';
 import PostForm from './components/PostForm';
@@ -7,12 +8,14 @@ import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
 
 function App() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
     <BrowserRouter>
-      <Navbar />
+      <Navbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
       <div style={{display: 'flex', marginTop: '60px'}}>
-        <Sidebar />
-        <div style={{
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <div className="main-content" style={{
           marginLeft: '240px',
           flex: 1,
           minHeight: 'calc(100vh - 60px)',
