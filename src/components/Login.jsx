@@ -10,6 +10,7 @@ function Login() {
     });
     if (error) alert('로그인 실패: ' + error.message);
     };
+    
 
   return (
     <div style={{
