@@ -52,9 +52,12 @@ function Navbar({ onMenuClick }) {
         <div className="desktop-menu" style={{display: 'flex', alignItems: 'center', gap: '24px'}}>
           {user ? (
             <>
-              <span style={{fontSize: '14px', color: '#666'}}>
-                {user.email || user.user_metadata?.name || '사용자'}
-              </span>
+            <span
+            onClick={() => navigate('/mypage')}
+            style={{fontSize: '14px', color: '#666', cursor: 'pointer'}}
+            >
+            {user.email || user.user_metadata?.name || '사용자'}
+            </span>
               <button onClick={handleLogout} style={{
                 backgroundColor: '#f5f5f5', color: '#666',
                 padding: '8px 20px', borderRadius: '8px', fontWeight: '600', fontSize: '14px'
