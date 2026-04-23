@@ -1,12 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../api';
+import { supabase } from '../supabase';
 
 function PostDetail() {
   const { id } = useParams();
   const [post, setPost] = useState(null);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+  }, []);
 
   useEffect(() => {
     api.get(`/posts/${id}`).then(res => setPost(res.data));
@@ -25,27 +33,19 @@ function PostDetail() {
   );
 
   return (
-    <div style={{
-      maxWidth: '700px', margin: '50px auto', padding: '0 24px'
-    }}>
+    <div style={{maxWidth: '700px', margin: '50px auto', padding: '0 24px'}}>
       <div style={{
         backgroundColor: '#fff', borderRadius: '20px',
         boxShadow: '0 2px 16px rgba(0,0,0,0.08)', padding: '40px'
       }}>
 
         {/* 제목 */}
-        <h1 style={{
-          fontSize: '26px', fontWeight: '700',
-          color: '#3f3f3f', marginBottom: '16px'
-        }}>
+        <h1 style={{fontSize: '26px', fontWeight: '700', color: '#3f3f3f', marginBottom: '16px'}}>
           {post.title}
         </h1>
 
         {/* 작성자 / 날짜 */}
-        <div style={{
-          display: 'flex', gap: '16px',
-          color: '#999', fontSize: '14px', marginBottom: '32px'
-        }}>
+        <div style={{display: 'flex', gap: '16px', color: '#999', fontSize: '14px', marginBottom: '32px'}}>
           <span>👤 {post.author}</span>
           <span>📅 {new Date(post.createdAt).toLocaleDateString()}</span>
           <span>👀 {post.viewCount}</span>
@@ -54,10 +54,7 @@ function PostDetail() {
         <hr style={{ border: 'none', borderTop: '1px solid #f0f0f0', marginBottom: '32px' }} />
 
         {/* 내용 */}
-        <p style={{
-          fontSize: '16px', lineHeight: '1.9',
-          color: '#444', whiteSpace: 'pre-wrap', minHeight: '200px'
-        }}>
+        <p style={{fontSize: '16px', lineHeight: '1.9', color: '#444', whiteSpace: 'pre-wrap', minHeight: '200px'}}>
           {post.content}
         </p>
 
@@ -76,7 +73,6 @@ function PostDetail() {
               />
             </div>
 
-            {/* 이미지 모달 */}
             {showModal && (
               <div
                 onClick={() => setShowModal(false)}
@@ -113,18 +109,22 @@ function PostDetail() {
           >
             목록
           </button>
-          <button
-            onClick={() => navigate(`/posts/${id}/edit`)}
-            style={{ backgroundColor: '#e8eaf6', color: '#5c6bc0', fontWeight: '600' }}
-          >
-            수정
-          </button>
-          <button
-            onClick={handleDelete}
-            style={{ backgroundColor: '#fce4ec', color: '#e57373', fontWeight: '600' }}
-          >
-            삭제
-          </button>
+          {user && user.id === post.userId && (
+            <>
+              <button
+                onClick={() => navigate(`/posts/${id}/edit`)}
+                style={{ backgroundColor: '#e8eaf6', color: '#5c6bc0', fontWeight: '600' }}
+              >
+                수정
+              </button>
+              <button
+                onClick={handleDelete}
+                style={{ backgroundColor: '#fce4ec', color: '#e57373', fontWeight: '600' }}
+              >
+                삭제
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
