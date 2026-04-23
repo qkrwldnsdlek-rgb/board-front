@@ -31,7 +31,7 @@ function Navbar({ onMenuClick }) {
         maxWidth: '100%', padding: '0 24px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '60px'
       }}>
-        {/* 로고 */}
+        {/* 왼쪽: 햄버거 + 로고 */}
         <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
           <div onClick={onMenuClick} className="hamburger" style={{
             cursor: 'pointer', padding: '4px', display: 'none', flexDirection: 'column', gap: '5px'
@@ -48,16 +48,17 @@ function Navbar({ onMenuClick }) {
           </div>
         </div>
 
-        {/* 데스크탑 메뉴 */}
-        <div className="desktop-menu" style={{display: 'flex', alignItems: 'center', gap: '24px'}}>
+        {/* 오른쪽: 이메일(데스크탑만) + 로그인/로그아웃(항상) */}
+        <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
           {user ? (
             <>
-            <span
-            onClick={() => navigate('/mypage')}
-            style={{fontSize: '14px', color: '#666', cursor: 'pointer'}}
-            >
-            {user.email || user.user_metadata?.name || '사용자'}
-            </span>
+              <span
+                onClick={() => navigate('/mypage')}
+                className="desktop-menu"
+                style={{fontSize: '14px', color: '#666', cursor: 'pointer'}}
+              >
+                {user.email || user.user_metadata?.name || '사용자'}
+              </span>
               <button onClick={handleLogout} style={{
                 backgroundColor: '#f5f5f5', color: '#666',
                 padding: '8px 20px', borderRadius: '8px', fontWeight: '600', fontSize: '14px'
