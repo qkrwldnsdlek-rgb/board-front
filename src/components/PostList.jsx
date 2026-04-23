@@ -47,13 +47,8 @@ function PostList() {
 
   return (
     <div style={{maxWidth: '860px', margin: '50px auto', padding: '0 24px'}}>
-      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
+      <div style={{marginBottom: '24px'}}>
         <h1 style={{fontSize: '26px', fontWeight: '700', color: '#3f3f3f'}}>게시판</h1>
-        {user && (
-          <button onClick={() => navigate('/posts/new')} style={{backgroundColor: '#5c6bc0', color: '#fff', padding: '10px 20px', borderRadius: '10px', fontWeight: '600'}}>
-            + 글쓰기
-          </button>
-        )}
       </div>
 
       {/* 검색창 */}
@@ -171,6 +166,15 @@ function PostList() {
           다음
         </button>
       </div>
+
+      {/* 글쓰기 버튼 */}
+      {user && (
+        <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '16px'}}>
+          <button onClick={() => navigate('/posts/new')} style={{backgroundColor: '#5c6bc0', color: '#fff', padding: '10px 20px', borderRadius: '10px', fontWeight: '600'}}>
+            + 글쓰기
+          </button>
+        </div>
+      )}
     </div>
   );
 }
