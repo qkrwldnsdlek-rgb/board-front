@@ -33,6 +33,16 @@ function Sidebar({ isOpen, onClose }) {
         <div style={{marginBottom: '32px'}}>
           <p style={{fontSize: '11px', fontWeight: '700', color: '#bbb', letterSpacing: '1px', marginBottom: '12px'}}>MENU</p>
           <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
+            <li onClick={() => { navigate('/mypage'); onClose(); }} style={{
+            display: 'flex', alignItems: 'center', gap: '10px',
+            padding: '10px 12px', borderRadius: '8px', cursor: 'pointer',
+            color: '#444', fontWeight: '500', fontSize: '14px', marginBottom: '4px'
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = '#f0f2ff'}
+            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            >
+            👤 마이페이지
+            </li>
             <li onClick={() => { navigate('/'); onClose(); }} style={{
               display: 'flex', alignItems: 'center', gap: '10px',
               padding: '10px 12px', borderRadius: '8px', cursor: 'pointer',
