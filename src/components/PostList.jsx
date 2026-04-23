@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
+import { supabase } from '../supabase';
 
 function PostList() {
   const [posts, setPosts] = useState([]);
@@ -8,7 +9,18 @@ function PostList() {
   const [totalPages, setTotalPages] = useState(0);
   const [keyword, setKeyword] = useState('');
   const [searchInput, setSearchInput] = useState('');
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     api.get(`/posts?page=${page}&size=10${keyword ? `&keyword=${keyword}` : ''}`).then(res => {
@@ -37,9 +49,11 @@ function PostList() {
     <div style={{maxWidth: '860px', margin: '50px auto', padding: '0 24px'}}>
       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
         <h1 style={{fontSize: '26px', fontWeight: '700', color: '#3f3f3f'}}>게시판</h1>
-        <button onClick={() => navigate('/posts/new')} style={{backgroundColor: '#5c6bc0', color: '#fff', padding: '10px 20px', borderRadius: '10px', fontWeight: '600'}}>
-          + 글쓰기
-        </button>
+        {user && (
+          <button onClick={() => navigate('/posts/new')} style={{backgroundColor: '#5c6bc0', color: '#fff', padding: '10px 20px', borderRadius: '10px', fontWeight: '600'}}>
+            + 글쓰기
+          </button>
+        )}
       </div>
 
       {/* 검색창 */}
@@ -51,10 +65,7 @@ function PostList() {
           placeholder="제목으로 검색..."
           style={{flex: 1, padding: '10px 14px', borderRadius: '10px', border: '1.5px solid #e0e0e0', fontSize: '15px'}}
         />
-        <button
-          onClick={handleSearch}
-          style={{backgroundColor: '#5c6bc0', color: '#fff', padding: '10px 20px', borderRadius: '10px', fontWeight: '600'}}
-        >
+        <button onClick={handleSearch} style={{backgroundColor: '#5c6bc0', color: '#fff', padding: '10px 20px', borderRadius: '10px', fontWeight: '600'}}>
           검색
         </button>
         {keyword && (
@@ -77,13 +88,13 @@ function PostList() {
               <th style={{padding: '14px', textAlign: 'center', width: '100px'}}>작성자</th>
               <th style={{padding: '14px', textAlign: 'center', width: '120px'}}>작성일</th>
               <th style={{padding: '14px', textAlign: 'center', width: '80px'}}>조회수</th>
-              <th style={{padding: '14px', textAlign: 'center', width: '120px'}}>관리</th>
+              {user && <th style={{padding: '14px', textAlign: 'center', width: '120px'}}>관리</th>}
             </tr>
           </thead>
           <tbody>
             {posts.length === 0 ? (
               <tr>
-                <td colSpan={7} style={{textAlign: 'center', padding: '40px', color: '#aaa'}}>
+                <td colSpan={user ? 7 : 6} style={{textAlign: 'center', padding: '40px', color: '#aaa'}}>
                   {keyword ? `"${keyword}" 검색 결과가 없습니다.` : '게시글이 없습니다.'}
                 </td>
               </tr>
@@ -117,10 +128,16 @@ function PostList() {
                   <td data-label="조회수" style={{padding: '14px', textAlign: 'center', color: '#999', fontSize: '13px'}}>
                     👀 {post.viewCount}
                   </td>
-                  <td data-label="관리" style={{padding: '14px', textAlign: 'center', whiteSpace: 'nowrap'}}>
-                    <button onClick={() => navigate(`/posts/${post.id}/edit`)} style={{backgroundColor: '#e8eaf6', color: '#5c6bc0', marginRight: '6px', fontWeight: '600'}}>수정</button>
-                    <button onClick={() => handleDelete(post.id)} style={{backgroundColor: '#fce4ec', color: '#e57373', fontWeight: '600'}}>삭제</button>
-                  </td>
+                  {user && (
+                    <td data-label="관리" style={{padding: '14px', textAlign: 'center', whiteSpace: 'nowrap'}}>
+                      {user.id === post.userId && (
+                        <>
+                          <button onClick={() => navigate(`/posts/${post.id}/edit`)} style={{backgroundColor: '#e8eaf6', color: '#5c6bc0', marginRight: '6px', fontWeight: '600'}}>수정</button>
+                          <button onClick={() => handleDelete(post.id)} style={{backgroundColor: '#fce4ec', color: '#e57373', fontWeight: '600'}}>삭제</button>
+                        </>
+                      )}
+                    </td>
+                  )}
                 </tr>
               ))
             )}

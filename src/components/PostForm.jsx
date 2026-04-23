@@ -7,6 +7,13 @@ function PostForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEdit = !!id;
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+  }, []);
 
   const [form, setForm] = useState({
     title: '',
@@ -62,7 +69,7 @@ function PostForm() {
     }
     setUploading(true);
     const imageUrl = await uploadImage();
-    const postData = { ...form, imageUrl };
+    const postData = { ...form, imageUrl, userId: user?.id };
 
     if (isEdit) {
       api.put(`/posts/${id}`, postData).then(() => navigate(`/posts/${id}`));
