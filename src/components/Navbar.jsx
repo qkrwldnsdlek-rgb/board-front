@@ -33,14 +33,12 @@ function Navbar({ onMenuClick }) {
 
         {/* 데스크탑 메뉴 */}
         <div className="desktop-menu" style={{display: 'flex', alignItems: 'center', gap: '24px'}}>
-          <span onClick={() => navigate('/')} style={{cursor: 'pointer', color: '#666', fontWeight: '500', fontSize: '15px'}}>홈</span>
-          <span onClick={() => navigate('/posts/new')} style={{cursor: 'pointer', color: '#666', fontWeight: '500', fontSize: '15px'}}>글쓰기</span>
-          <button onClick={() => navigate('/login')} style={{
+        <button onClick={() => navigate('/login')} style={{
             backgroundColor: '#5c6bc0', color: '#fff',
             padding: '8px 20px', borderRadius: '8px', fontWeight: '600', fontSize: '14px'
-          }}>
+        }}>
             로그인
-          </button>
+        </button>
         </div>
       </div>
     </nav>

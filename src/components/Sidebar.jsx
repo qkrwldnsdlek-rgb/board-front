@@ -1,15 +1,21 @@
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import api from '../api';
 
 function Sidebar({ isOpen, onClose }) {
   const navigate = useNavigate();
+  const [stats, setStats] = useState({ todayVisit: 0, totalPosts: 0 });
+
+  useEffect(() => {
+    api.get('/stats').then(res => setStats(res.data));
+  }, []);
 
   return (
     <>
-      {/* 모바일 오버레이 */}
       {isOpen && (
         <div onClick={onClose} style={{
           position: 'fixed', top: '60px', left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 998, display: 'none'
+          backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 998
         }} className="sidebar-overlay" />
       )}
 
@@ -37,16 +43,6 @@ function Sidebar({ isOpen, onClose }) {
             >
               🏠 홈
             </li>
-            <li onClick={() => { navigate('/posts/new'); onClose(); }} style={{
-              display: 'flex', alignItems: 'center', gap: '10px',
-              padding: '10px 12px', borderRadius: '8px', cursor: 'pointer',
-              color: '#444', fontWeight: '500', fontSize: '14px', marginBottom: '4px'
-            }}
-              onMouseEnter={e => e.currentTarget.style.background = '#f0f2ff'}
-              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-            >
-              ✏️ 글쓰기
-            </li>
           </ul>
         </div>
 
@@ -71,11 +67,11 @@ function Sidebar({ isOpen, onClose }) {
           <p style={{fontSize: '11px', fontWeight: '700', color: '#bbb', letterSpacing: '1px', marginBottom: '12px'}}>STATS</p>
           <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '8px'}}>
             <span style={{fontSize: '13px', color: '#888'}}>전체 게시글</span>
-            <span style={{fontSize: '13px', fontWeight: '700', color: '#5c6bc0'}}>-</span>
+            <span style={{fontSize: '13px', fontWeight: '700', color: '#5c6bc0'}}>{stats.totalPosts}</span>
           </div>
           <div style={{display: 'flex', justifyContent: 'space-between'}}>
             <span style={{fontSize: '13px', color: '#888'}}>오늘 방문</span>
-            <span style={{fontSize: '13px', fontWeight: '700', color: '#5c6bc0'}}>-</span>
+            <span style={{fontSize: '13px', fontWeight: '700', color: '#5c6bc0'}}>{stats.todayVisit}</span>
           </div>
         </div>
       </aside>
