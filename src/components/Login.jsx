@@ -1,15 +1,16 @@
 import { supabase } from '../supabase';
 
 function Login() {
-  const handleKakaoLogin = async () => {
+    const handleKakaoLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'kakao',
-      options: {
-        redirectTo: 'https://board-pjw.vercel.app'
-      }
+        provider: 'kakao',
+        options: {
+        redirectTo: 'https://board-pjw.vercel.app',
+        scopes: 'profile_nickname profile_image'
+        }
     });
     if (error) alert('로그인 실패: ' + error.message);
-  };
+    };
 
   return (
     <div style={{
