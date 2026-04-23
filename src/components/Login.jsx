@@ -5,7 +5,9 @@ function Login() {
     const { error } = await supabase.auth.signInWithOAuth({
         provider: 'kakao',
         options: {
-        redirectTo: 'https://board-pjw.vercel.app'
+        redirectTo: 'https://board-pjw.vercel.app',
+        // 현재 카카오 설정에서 '선택 동의'로 되어 있는 항목만 적어줍니다.
+        scopes: 'profile_nickname profile_image'
         }
     });
               if (error) alert('로그인 실패: ' + error.message);
