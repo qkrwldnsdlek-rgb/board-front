@@ -1,13 +1,25 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import api from '../api';
+import { supabase } from '../supabase';
 
 function Sidebar({ isOpen, onClose }) {
   const navigate = useNavigate();
   const [stats, setStats] = useState({ todayVisit: 0, totalPosts: 0 });
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     api.get('/stats').then(res => setStats(res.data));
+  }, []);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
   }, []);
 
   return (
@@ -33,16 +45,6 @@ function Sidebar({ isOpen, onClose }) {
         <div style={{marginBottom: '32px'}}>
           <p style={{fontSize: '11px', fontWeight: '700', color: '#bbb', letterSpacing: '1px', marginBottom: '12px'}}>MENU</p>
           <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
-            <li onClick={() => { navigate('/mypage'); onClose(); }} style={{
-            display: 'flex', alignItems: 'center', gap: '10px',
-            padding: '10px 12px', borderRadius: '8px', cursor: 'pointer',
-            color: '#444', fontWeight: '500', fontSize: '14px', marginBottom: '4px'
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = '#f0f2ff'}
-            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-            >
-            👤 마이페이지
-            </li>
             <li onClick={() => { navigate('/'); onClose(); }} style={{
               display: 'flex', alignItems: 'center', gap: '10px',
               padding: '10px 12px', borderRadius: '8px', cursor: 'pointer',
@@ -53,6 +55,18 @@ function Sidebar({ isOpen, onClose }) {
             >
               🏠 홈
             </li>
+            {user && (
+              <li onClick={() => { navigate('/mypage'); onClose(); }} style={{
+                display: 'flex', alignItems: 'center', gap: '10px',
+                padding: '10px 12px', borderRadius: '8px', cursor: 'pointer',
+                color: '#444', fontWeight: '500', fontSize: '14px', marginBottom: '4px'
+              }}
+                onMouseEnter={e => e.currentTarget.style.background = '#f0f2ff'}
+                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+              >
+                👤 마이페이지
+              </li>
+            )}
           </ul>
         </div>
 
