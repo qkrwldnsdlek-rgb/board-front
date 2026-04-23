@@ -121,7 +121,7 @@ function PostList() {
                     {new Date(post.createdAt).toLocaleDateString()}
                   </td>
                   <td data-label="조회수" style={{padding: '14px', textAlign: 'center', color: '#999', fontSize: '13px'}}>
-                    👀 {post.viewCount}
+                    {post.viewCount}
                   </td>
                   {user && (
                     <td data-label="관리" style={{padding: '14px', textAlign: 'center', whiteSpace: 'nowrap'}}>
