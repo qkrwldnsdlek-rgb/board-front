@@ -15,7 +15,9 @@ function App() {
       <Navbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
       <div style={{display: 'flex', marginTop: '60px'}}>
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-        <div className="main-content" style={{
+        <div className="main-content" 
+        onClick={() => setSidebarOpen(false)}
+        style={{
           marginLeft: '240px',
           flex: 1,
           minHeight: 'calc(100vh - 60px)',
