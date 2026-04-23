@@ -41,7 +41,9 @@ input:focus, textarea:focus {
   }
 
   .hamburger {
-    display: block !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 5px !important;
   }
 
   .sidebar {

@@ -18,11 +18,11 @@ function Navbar({ onMenuClick }) {
           {/* 햄버거 버튼 */}
           <div onClick={onMenuClick} className="hamburger" style={{
             cursor: 'pointer', padding: '4px', display: 'none', flexDirection: 'column', gap: '5px'
-          }}>
+            }}>
             <div style={{width: '24px', height: '2px', backgroundColor: '#333'}}></div>
             <div style={{width: '24px', height: '2px', backgroundColor: '#333'}}></div>
             <div style={{width: '24px', height: '2px', backgroundColor: '#333'}}></div>
-          </div>
+            </div>
           <div onClick={() => navigate('/')} style={{cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'}}>
             <div style={{width: '32px', height: '32px', backgroundColor: '#5c6bc0', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
               <span style={{color: '#fff', fontWeight: '700', fontSize: '16px'}}>B</span>
