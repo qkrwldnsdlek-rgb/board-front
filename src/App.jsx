@@ -16,15 +16,15 @@ function App() {
       <div style={{display: 'flex', marginTop: '60px'}}>
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <div className="main-content" 
-        onClick={() => setSidebarOpen(false)}
-        style={{
-          marginLeft: '240px',
-          flex: 1,
-          minHeight: 'calc(100vh - 60px)',
-          backgroundColor: '#f5f7fa',
-          display: 'flex',
-          flexDirection: 'column'
-        }}>
+          onClick={() => setSidebarOpen(false)}
+          style={{
+            marginLeft: '240px',
+            flex: 1,
+            minHeight: '100vh',
+            backgroundColor: '#f5f7fa',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
           <div style={{flex: 1, padding: '24px 0'}}>
             <Routes>
               <Route path="/" element={<PostList />} />
