@@ -8,9 +8,8 @@ function Login() {
         redirectTo: 'https://board-pjw.vercel.app'
         }
     });
-    if (error) alert('로그인 실패: ' + error.message);
+              if (error) alert('로그인 실패: ' + error.message);
     };
-    
 
   return (
     <div style={{
