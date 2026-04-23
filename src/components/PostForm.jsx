@@ -48,12 +48,21 @@ function PostForm() {
 
   const uploadImage = async () => {
     if (!imageFile) return form.imageUrl;
+  
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      alert('로그인이 필요합니다.');
+      return null;
+    }
+
     const fileName = `${Date.now()}_${imageFile.name}`;
     const { error } = await supabase.storage
       .from('board-images')
-      .upload(fileName, imageFile);
+      .upload(fileName, imageFile, {
+        upsert: true
+      });
     if (error) {
-      alert('이미지 업로드 실패');
+      alert('이미지 업로드 실패: ' + error.message);
       return null;
     }
     const { data } = supabase.storage
