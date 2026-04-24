@@ -130,8 +130,8 @@ function AdminPage() {
                     onMouseEnter={e => e.currentTarget.style.background = '#fafafa'}
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                   >
-                    <td style={{padding: '14px', textAlign: 'center', color: '#999'}}>{page * 10 + index + 1}</td>
-                    <td style={{padding: '14px'}}>
+                    <td data-label="번호" style={{padding: '14px', textAlign: 'center', color: '#999'}}>{page * 10 + index + 1}</td>
+                    <td data-label="제목" style={{padding: '14px'}}>
                       <span onClick={() => navigate(`/posts/${post.id}?from=admin&tab=posts`)}
                         style={{cursor: 'pointer', color: '#3d3d3d', fontWeight: '500'}}
                         onMouseEnter={e => e.target.style.color = '#5c6bc0'}
@@ -140,8 +140,8 @@ function AdminPage() {
                         {post.title}
                       </span>
                     </td>
-                    <td style={{padding: '14px', textAlign: 'center', color: '#666'}}>{post.author}</td>
-                    <td style={{padding: '14px', textAlign: 'center'}}>
+                    <td data-label="작성자" style={{padding: '14px', textAlign: 'center', color: '#666'}}>{post.author}</td>
+                    <td data-label="카테고리" style={{padding: '14px', textAlign: 'center'}}>
                       <span style={{
                         backgroundColor: '#f0f2ff', color: '#5c6bc0',
                         padding: '4px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: '600'
@@ -149,10 +149,10 @@ function AdminPage() {
                         {post.category || '미분류'}
                       </span>
                     </td>
-                    <td style={{padding: '14px', textAlign: 'center', color: '#999', fontSize: '13px'}}>
+                    <td data-label="작성일" style={{padding: '14px', textAlign: 'center', color: '#999', fontSize: '13px'}}>
                       {new Date(post.createdAt).toLocaleDateString()}
                     </td>
-                    <td style={{padding: '14px', textAlign: 'center'}}>
+                    <td data-label="관리" style={{padding: '14px', textAlign: 'center'}}>
                       <button onClick={() => handleDelete(post.id)}
                         style={{backgroundColor: '#fce4ec', color: '#e57373', fontWeight: '600', fontSize: '13px'}}>
                         삭제
