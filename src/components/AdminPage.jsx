@@ -131,7 +131,7 @@ function AdminPage() {
                   >
                     <td style={{padding: '14px', textAlign: 'center', color: '#999'}}>{page * 10 + index + 1}</td>
                     <td style={{padding: '14px'}}>
-                      <span onClick={() => navigate(`/posts/${post.id}`)}
+                      <span onClick={() => navigate(`/posts/${post.id}?from=admin`)}
                         style={{cursor: 'pointer', color: '#3d3d3d', fontWeight: '500'}}
                         onMouseEnter={e => e.target.style.color = '#5c6bc0'}
                         onMouseLeave={e => e.target.style.color = '#3d3d3d'}

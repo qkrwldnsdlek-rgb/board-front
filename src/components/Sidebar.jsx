@@ -9,9 +9,11 @@ function Sidebar({ isOpen, onClose }) {
   const [stats, setStats] = useState({ todayVisit: 0, totalPosts: 0 });
   const [user, setUser] = useState(null);
 
-  const currentCategory = (location.pathname === '/posts' || location.pathname.startsWith('/posts/'))
-  ? (new URLSearchParams(location.search).get('category') || '전체')
-  : '';
+  const fromAdmin = new URLSearchParams(location.search).get('from') === 'admin';
+
+  const currentCategory = !fromAdmin && (location.pathname === '/posts' || location.pathname.startsWith('/posts/'))
+    ? (new URLSearchParams(location.search).get('category') || '전체')
+    : '';
 
   useEffect(() => {
     api.get('/stats').then(res => setStats(res.data));
