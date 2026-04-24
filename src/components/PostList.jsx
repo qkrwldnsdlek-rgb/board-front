@@ -16,6 +16,8 @@ function PostList() {
   const category = new URLSearchParams(location.search).get('category') || '';
   const categoryParam = category ? `?category=${encodeURIComponent(category)}` : '';
 
+  const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
+
   useEffect(() => {
     setPage(0);
   }, [category]);
@@ -184,7 +186,7 @@ function PostList() {
       </div>
 
       {/* 글쓰기 버튼 */}
-      {user && (
+      {user && category !== '' && (category !== '공지사항' || user.email === ADMIN_EMAIL) && (
         <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '16px'}}>
           <button onClick={() => navigate(`/posts/new${categoryParam}`)} style={{backgroundColor: '#5c6bc0', color: '#fff', padding: '10px 20px', borderRadius: '10px', fontWeight: '600'}}>
             + 글쓰기

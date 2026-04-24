@@ -88,7 +88,7 @@ function Sidebar({ isOpen, onClose }) {
                 👤 마이페이지
               </li>
             )}
-            {user?.email === 'qkrwldnsdlek@gmail.com' && (
+            {user?.email === import.meta.env.VITE_ADMIN_EMAIL && (
               <li onClick={() => { navigate('/admin'); onClose(); }} style={{
                 display: 'flex', alignItems: 'center', gap: '10px',
                 padding: '10px 12px', borderRadius: '8px', cursor: 'pointer',

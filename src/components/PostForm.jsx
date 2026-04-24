@@ -31,6 +31,8 @@ function PostForm() {
     else navigate(`/posts${categoryParam}`);
   };
 
+  const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
@@ -45,6 +47,12 @@ function PostForm() {
       });
     }
   }, [id]);
+
+  useEffect(() => {
+    if (!isEdit && category) {
+      setForm(prev => ({ ...prev, category }));
+    }
+  }, [category]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -88,7 +96,7 @@ function PostForm() {
     const imageUrl = await uploadImage();
     const postData = { ...form, imageUrl, userId: user?.id };
     if (isEdit) {
-      api.put(`/posts/${id}`, postData).then(() => navigate(`/posts/${id}${fromAdmin ? '?from=admin' : categoryParam}`));
+      api.put(`/posts/${id}`, postData).then(() => navigate(`/posts/${id}${fromAdmin ? '?from=admin&tab=posts' : categoryParam}`));
     } else {
       api.post('/posts', postData).then(() => navigate(`/posts${categoryParam}`));
     }
@@ -111,7 +119,7 @@ function PostForm() {
           <label style={{fontSize: '14px', fontWeight: '600', color: '#666', display: 'block', marginBottom: '8px'}}>작성자</label>
           <input name="author" value={form.author} onChange={handleChange} placeholder="작성자를 입력하세요" />
         </div>
-
+{(!category || user?.email === ADMIN_EMAIL) && (
         <div style={{marginBottom: '20px'}}>
           <label style={{fontSize: '14px', fontWeight: '600', color: '#666', display: 'block', marginBottom: '8px'}}>카테고리</label>
           <select name="category" value={form.category} onChange={handleChange}
@@ -122,7 +130,7 @@ function PostForm() {
             <option value="질문">질문</option>
           </select>
         </div>
-
+)}
         <div style={{marginBottom: '20px'}}>
           <label style={{fontSize: '14px', fontWeight: '600', color: '#666', display: 'block', marginBottom: '8px'}}>이미지 첨부</label>
           <input type="file" accept="image/*" onChange={handleImageChange} />

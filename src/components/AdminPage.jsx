@@ -4,7 +4,7 @@ import { supabase } from '../supabase';
 import api from '../api';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
-const ADMIN_EMAIL = 'qkrwldnsdlek@gmail.com';
+const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
 
 function AdminPage() {
   const navigate = useNavigate();
