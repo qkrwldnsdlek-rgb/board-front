@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../supabase';
 import api from '../api';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
@@ -14,6 +14,8 @@ function AdminPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(0);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(new URLSearchParams(location.search).get('tab') || 'dashboard');
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -131,7 +133,7 @@ function AdminPage() {
                   >
                     <td style={{padding: '14px', textAlign: 'center', color: '#999'}}>{page * 10 + index + 1}</td>
                     <td style={{padding: '14px'}}>
-                      <span onClick={() => navigate(`/posts/${post.id}?from=admin`)}
+                      <span onClick={() => navigate(`/posts/${post.id}?from=admin&tab=posts`)}
                         style={{cursor: 'pointer', color: '#3d3d3d', fontWeight: '500'}}
                         onMouseEnter={e => e.target.style.color = '#5c6bc0'}
                         onMouseLeave={e => e.target.style.color = '#3d3d3d'}

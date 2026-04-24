@@ -24,8 +24,10 @@ function PostForm() {
 
   const fromAdmin = new URLSearchParams(location.search).get('from') === 'admin';
 
+  const tab = new URLSearchParams(location.search).get('tab') || 'dashboard';
+
   const goBack = () => {
-    if (fromAdmin) navigate('/admin');
+    if (fromAdmin) navigate(`/admin?tab=${tab}`);
     else navigate(`/posts${categoryParam}`);
   };
 

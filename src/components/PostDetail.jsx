@@ -15,8 +15,10 @@ function PostDetail() {
   const fromAdmin = new URLSearchParams(location.search).get('from') === 'admin';
   const categoryParam = category ? `?category=${encodeURIComponent(category)}` : '';
 
+  const tab = new URLSearchParams(location.search).get('tab') || 'dashboard';
+
   const goBack = () => {
-    if (fromAdmin) navigate('/admin');
+    if (fromAdmin) navigate(`/admin?tab=${tab}`);
     else navigate(`/posts${categoryParam}`);
   };
 
@@ -78,7 +80,7 @@ function PostDetail() {
           </button>
           {user && user.id === post.userId && (
             <>
-              <button onClick={() => navigate(`/posts/${id}/edit${fromAdmin ? '?from=admin' : categoryParam}`)}
+              <button onClick={() => navigate(`/posts/${id}/edit${fromAdmin ? '?from=admin&tab=posts' : categoryParam}`)}
               style={{ backgroundColor: '#e8eaf6', color: '#5c6bc0', fontWeight: '600' }}>
               수정
             </button>
