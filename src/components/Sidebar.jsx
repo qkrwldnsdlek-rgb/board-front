@@ -79,6 +79,22 @@ function Sidebar({ isOpen, onClose }) {
                 👤 마이페이지
               </li>
             )}
+
+
+            {user?.email === 'qkrwldnsdlek@gmail.com' && (
+              <li onClick={() => { navigate('/admin'); onClose(); }} style={{
+                display: 'flex', alignItems: 'center', gap: '10px',
+                padding: '10px 12px', borderRadius: '8px', cursor: 'pointer',
+                color: '#444', fontWeight: '500', fontSize: '14px', marginBottom: '4px'
+              }}
+                onMouseEnter={e => e.currentTarget.style.background = '#f0f2ff'}
+                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+              >
+                🛠️ 관리자
+              </li>
+            )}
+
+
           </ul>
         </div>
 

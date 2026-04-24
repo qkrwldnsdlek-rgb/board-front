@@ -8,6 +8,7 @@ import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
 import Login from './components/Login';
 import MyPage from './components/MyPage';
+import AdminPage from './components/AdminPage';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -35,6 +36,7 @@ function App() {
               <Route path="/posts/:id/edit" element={<PostForm />} />
               <Route path="/login" element={<Login />} />
               <Route path="/mypage" element={<MyPage />} />
+              <Route path="/admin" element={<AdminPage />} />
             </Routes>
           </div>
           <Footer />
