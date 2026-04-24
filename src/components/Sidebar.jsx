@@ -9,9 +9,9 @@ function Sidebar({ isOpen, onClose }) {
   const [stats, setStats] = useState({ todayVisit: 0, totalPosts: 0 });
   const [user, setUser] = useState(null);
 
-  const currentCategory = location.pathname === '/admin' 
-  ? '' 
-  : new URLSearchParams(location.search).get('category') || '전체';
+  const currentCategory = location.pathname === '/' 
+  ? (new URLSearchParams(location.search).get('category') || '전체')
+  : '';
 
   useEffect(() => {
     api.get('/stats').then(res => setStats(res.data));
@@ -62,10 +62,13 @@ function Sidebar({ isOpen, onClose }) {
             <li onClick={() => { navigate('/'); onClose(); }} style={{
               display: 'flex', alignItems: 'center', gap: '10px',
               padding: '10px 12px', borderRadius: '8px', cursor: 'pointer',
-              color: '#444', fontWeight: '500', fontSize: '14px', marginBottom: '4px'
+              color: location.pathname === '/' ? '#5c6bc0' : '#444',
+              fontWeight: location.pathname === '/' ? '700' : '500',
+              fontSize: '14px', marginBottom: '4px',
+              backgroundColor: location.pathname === '/' ? '#f0f2ff' : 'transparent'
             }}
               onMouseEnter={e => e.currentTarget.style.background = '#f0f2ff'}
-              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+              onMouseLeave={e => e.currentTarget.style.background = location.pathname === '/' ? '#f0f2ff' : 'transparent'}
             >
               🏠 홈
             </li>
@@ -73,10 +76,13 @@ function Sidebar({ isOpen, onClose }) {
               <li onClick={() => { navigate('/mypage'); onClose(); }} style={{
                 display: 'flex', alignItems: 'center', gap: '10px',
                 padding: '10px 12px', borderRadius: '8px', cursor: 'pointer',
-                color: '#444', fontWeight: '500', fontSize: '14px', marginBottom: '4px'
+                color: location.pathname === '/mypage' ? '#5c6bc0' : '#444',
+                fontWeight: location.pathname === '/mypage' ? '700' : '500',
+                fontSize: '14px', marginBottom: '4px',
+                backgroundColor: location.pathname === '/mypage' ? '#f0f2ff' : 'transparent'
               }}
                 onMouseEnter={e => e.currentTarget.style.background = '#f0f2ff'}
-                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                onMouseLeave={e => e.currentTarget.style.background = location.pathname === '/mypage' ? '#f0f2ff' : 'transparent'}
               >
                 👤 마이페이지
               </li>
@@ -87,10 +93,13 @@ function Sidebar({ isOpen, onClose }) {
               <li onClick={() => { navigate('/admin'); onClose(); }} style={{
                 display: 'flex', alignItems: 'center', gap: '10px',
                 padding: '10px 12px', borderRadius: '8px', cursor: 'pointer',
-                color: '#444', fontWeight: '500', fontSize: '14px', marginBottom: '4px'
+                color: location.pathname === '/admin' ? '#5c6bc0' : '#444',
+                fontWeight: location.pathname === '/admin' ? '700' : '500',
+                fontSize: '14px', marginBottom: '4px',
+                backgroundColor: location.pathname === '/admin' ? '#f0f2ff' : 'transparent'
               }}
                 onMouseEnter={e => e.currentTarget.style.background = '#f0f2ff'}
-                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                onMouseLeave={e => e.currentTarget.style.background = location.pathname === '/admin' ? '#f0f2ff' : 'transparent'}
               >
                 🛠️ 관리자
               </li>
