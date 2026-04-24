@@ -102,15 +102,15 @@ function AdminPage() {
       {activeTab === 'posts' && (
         <div>
           <div style={{backgroundColor: '#fff', borderRadius: '16px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', overflow: 'hidden'}}>
-            <table style={{width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed'}}>
+            <table style={{width: '100%', borderCollapse: 'collapse'}}>
               <thead>
                 <tr style={{backgroundColor: '#f0f2ff', color: '#5c6bc0'}}>
-                  <th style={{padding: '14px', textAlign: 'center', width: '50px'}}>번호</th>
+                  <th style={{padding: '14px', textAlign: 'center', width: '60px'}}>번호</th>
                   <th style={{padding: '14px', textAlign: 'left'}}>제목</th>
-                  <th style={{padding: '14px', textAlign: 'center', width: '80px'}}>작성자</th>
-                  <th style={{padding: '14px', textAlign: 'center', width: '90px'}}>카테고리</th>
-                  <th style={{padding: '14px', textAlign: 'center', width: '100px'}}>작성일</th>
-                  <th style={{padding: '14px', textAlign: 'center', width: '60px'}}>관리</th>
+                  <th style={{padding: '14px', textAlign: 'center', width: '100px'}}>작성자</th>
+                  <th style={{padding: '14px', textAlign: 'center', width: '100px'}}>카테고리</th>
+                  <th style={{padding: '14px', textAlign: 'center', width: '120px'}}>작성일</th>
+                  <th style={{padding: '14px', textAlign: 'center', width: '80px'}}>관리</th>
                 </tr>
               </thead>
               <tbody>
@@ -120,7 +120,7 @@ function AdminPage() {
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                   >
                     <td data-label="번호" style={{padding: '14px', textAlign: 'center', color: '#999'}}>{page * 10 + index + 1}</td>
-                    <td data-label="제목" style={{padding: '14px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+                    <td data-label="제목" style={{padding: '14px'}}>
                       <span onClick={() => navigate(`/posts/${post.id}?from=admin&tab=posts`)}
                         style={{cursor: 'pointer', color: '#3d3d3d', fontWeight: '500'}}
                         onMouseEnter={e => e.target.style.color = '#5c6bc0'}
@@ -129,22 +129,21 @@ function AdminPage() {
                         {post.title}
                       </span>
                     </td>
-                    <td data-label="작성자" style={{padding: '14px', textAlign: 'center', color: '#666', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{post.author}</td>
+                    <td data-label="작성자" style={{padding: '14px', textAlign: 'center', color: '#666'}}>{post.author}</td>
                     <td data-label="카테고리" style={{padding: '14px', textAlign: 'center'}}>
                       <span style={{
                         backgroundColor: '#f0f2ff', color: '#5c6bc0',
-                        padding: '4px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: '600',
-                        whiteSpace: 'nowrap'
+                        padding: '4px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: '600'
                       }}>
                         {post.category || '미분류'}
                       </span>
                     </td>
-                    <td data-label="작성일" style={{padding: '14px', textAlign: 'center', color: '#999', fontSize: '13px', whiteSpace: 'nowrap'}}>
+                    <td data-label="작성일" style={{padding: '14px', textAlign: 'center', color: '#999', fontSize: '13px'}}>
                       {new Date(post.createdAt).toLocaleDateString()}
                     </td>
                     <td data-label="관리" style={{padding: '14px', textAlign: 'center'}}>
                       <button onClick={() => handleDelete(post.id)}
-                        style={{backgroundColor: '#fce4ec', color: '#e57373', fontWeight: '600', fontSize: '13px', whiteSpace: 'nowrap'}}>
+                        style={{backgroundColor: '#fce4ec', color: '#e57373', fontWeight: '600', fontSize: '13px'}}>
                         삭제
                       </button>
                     </td>
