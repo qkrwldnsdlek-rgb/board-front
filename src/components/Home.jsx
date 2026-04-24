@@ -59,16 +59,6 @@ function Home() {
         <p style={{ margin: '10px 0 18px', fontSize: isMobile ? 13 : 16, opacity: 0.9 }}>
           자유롭게 소통하고 질문하는 커뮤니티입니다.
         </p>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          <button
-            onClick={() => navigate('/posts')}
-            style={{ background: '#fff', color: '#5c6bc0', border: 'none', borderRadius: 8, padding: '9px 18px', fontWeight: 700, cursor: 'pointer', fontSize: 13 }}
-          >게시글 보기</button>
-          <button
-            onClick={() => navigate('/posts/new')}
-            style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', border: '2px solid rgba(255,255,255,0.6)', borderRadius: 8, padding: '9px 18px', fontWeight: 700, cursor: 'pointer', fontSize: 13 }}
-          >글쓰기</button>
-        </div>
       </div>
 
       <div style={{ marginBottom: 24 }}>
