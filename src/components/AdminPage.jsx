@@ -13,7 +13,6 @@ function AdminPage() {
   const [posts, setPosts] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(0);
-  const [activeTab, setActiveTab] = useState('dashboard');
   const location = useLocation();
   const [activeTab, setActiveTab] = useState(new URLSearchParams(location.search).get('tab') || 'dashboard');
 
