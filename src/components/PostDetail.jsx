@@ -14,6 +14,8 @@ function PostDetail() {
   const category = new URLSearchParams(location.search).get('category') || '';
   const categoryParam = category ? `?category=${encodeURIComponent(category)}` : '';
 
+  const fromAdmin = new URLSearchParams(location.search).get('from') === 'admin';
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
@@ -108,7 +110,7 @@ function PostDetail() {
         {/* 버튼 */}
         <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
           <button
-            onClick={() => navigate(`/posts${categoryParam}`)}
+            onClick={() => fromAdmin ? navigate('/admin') : navigate(`/posts${categoryParam}`)}
             style={{ backgroundColor: '#f5f5f5', color: '#888', fontWeight: '600' }}
           >
             목록
