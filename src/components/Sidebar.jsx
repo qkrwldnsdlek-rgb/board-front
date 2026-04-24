@@ -9,7 +9,9 @@ function Sidebar({ isOpen, onClose }) {
   const [stats, setStats] = useState({ todayVisit: 0, totalPosts: 0 });
   const [user, setUser] = useState(null);
 
-  const currentCategory = new URLSearchParams(location.search).get('category') || '전체';
+  const currentCategory = location.pathname === '/admin' 
+  ? '' 
+  : new URLSearchParams(location.search).get('category') || '전체';
 
   useEffect(() => {
     api.get('/stats').then(res => setStats(res.data));
