@@ -30,25 +30,19 @@ function AdminPage() {
   }, []);
 
   const loadStats = async (email) => {
-    const res = await api.get('/admin/stats', {
-      headers: { 'X-User-Email': email }
-    });
+    const res = await api.get('/admin/stats', { headers: { 'X-User-Email': email } });
     setStats(res.data);
   };
 
   const loadPosts = async (email, p) => {
-    const res = await api.get(`/admin/posts?page=${p}&size=10`, {
-      headers: { 'X-User-Email': email }
-    });
+    const res = await api.get(`/admin/posts?page=${p}&size=10`, { headers: { 'X-User-Email': email } });
     setPosts(res.data.content);
     setTotalPages(res.data.totalPages);
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm('삭제하시겠습니까?')) return;
-    await api.delete(`/admin/posts/${id}`, {
-      headers: { 'X-User-Email': user.email }
-    });
+    await api.delete(`/admin/posts/${id}`, { headers: { 'X-User-Email': user.email } });
     loadPosts(user.email, page);
   };
 
@@ -80,7 +74,6 @@ function AdminPage() {
       {/* 대시보드 탭 */}
       {activeTab === 'dashboard' && stats && (
         <div>
-          {/* 통계 카드 */}
           <div style={{display: 'flex', gap: '16px', marginBottom: '24px', flexWrap: 'wrap'}}>
             <div style={{flex: 1, minWidth: '150px', backgroundColor: '#fff', borderRadius: '16px', padding: '24px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', textAlign: 'center'}}>
               <p style={{fontSize: '13px', color: '#999', marginBottom: '8px'}}>전체 게시글</p>
@@ -91,15 +84,11 @@ function AdminPage() {
               <p style={{fontSize: '32px', fontWeight: '700', color: '#5c6bc0'}}>{stats.todayVisit}</p>
             </div>
           </div>
-
-          {/* 주간 방문자 그래프 */}
           <div style={{backgroundColor: '#fff', borderRadius: '16px', padding: '24px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)'}}>
             <h2 style={{fontSize: '16px', fontWeight: '700', color: '#3f3f3f', marginBottom: '20px'}}>📈 최근 7일 방문자</h2>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={stats.weeklyStats}>
-                <XAxis dataKey="date" tick={{fontSize: 12}}
-                  tickFormatter={v => v.slice(5)}
-                />
+                <XAxis dataKey="date" tick={{fontSize: 12}} tickFormatter={v => v.slice(5)} />
                 <YAxis tick={{fontSize: 12}} />
                 <Tooltip />
                 <Bar dataKey="count" fill="#5c6bc0" radius={[6, 6, 0, 0]} />
@@ -113,15 +102,15 @@ function AdminPage() {
       {activeTab === 'posts' && (
         <div>
           <div style={{backgroundColor: '#fff', borderRadius: '16px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', overflow: 'hidden'}}>
-            <table style={{width: '100%', borderCollapse: 'collapse'}}>
+            <table style={{width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed'}}>
               <thead>
                 <tr style={{backgroundColor: '#f0f2ff', color: '#5c6bc0'}}>
-                  <th style={{padding: '14px', textAlign: 'center', width: '60px'}}>번호</th>
+                  <th style={{padding: '14px', textAlign: 'center', width: '50px'}}>번호</th>
                   <th style={{padding: '14px', textAlign: 'left'}}>제목</th>
-                  <th style={{padding: '14px', textAlign: 'center', width: '100px'}}>작성자</th>
-                  <th style={{padding: '14px', textAlign: 'center', width: '100px'}}>카테고리</th>
-                  <th style={{padding: '14px', textAlign: 'center', width: '120px'}}>작성일</th>
-                  <th style={{padding: '14px', textAlign: 'center', width: '80px'}}>관리</th>
+                  <th style={{padding: '14px', textAlign: 'center', width: '80px'}}>작성자</th>
+                  <th style={{padding: '14px', textAlign: 'center', width: '90px'}}>카테고리</th>
+                  <th style={{padding: '14px', textAlign: 'center', width: '100px'}}>작성일</th>
+                  <th style={{padding: '14px', textAlign: 'center', width: '60px'}}>관리</th>
                 </tr>
               </thead>
               <tbody>
@@ -131,7 +120,7 @@ function AdminPage() {
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                   >
                     <td data-label="번호" style={{padding: '14px', textAlign: 'center', color: '#999'}}>{page * 10 + index + 1}</td>
-                    <td data-label="제목" style={{padding: '14px'}}>
+                    <td data-label="제목" style={{padding: '14px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
                       <span onClick={() => navigate(`/posts/${post.id}?from=admin&tab=posts`)}
                         style={{cursor: 'pointer', color: '#3d3d3d', fontWeight: '500'}}
                         onMouseEnter={e => e.target.style.color = '#5c6bc0'}
@@ -140,21 +129,22 @@ function AdminPage() {
                         {post.title}
                       </span>
                     </td>
-                    <td data-label="작성자" style={{padding: '14px', textAlign: 'center', color: '#666'}}>{post.author}</td>
+                    <td data-label="작성자" style={{padding: '14px', textAlign: 'center', color: '#666', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{post.author}</td>
                     <td data-label="카테고리" style={{padding: '14px', textAlign: 'center'}}>
                       <span style={{
                         backgroundColor: '#f0f2ff', color: '#5c6bc0',
-                        padding: '4px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: '600'
+                        padding: '4px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: '600',
+                        whiteSpace: 'nowrap'
                       }}>
                         {post.category || '미분류'}
                       </span>
                     </td>
-                    <td data-label="작성일" style={{padding: '14px', textAlign: 'center', color: '#999', fontSize: '13px'}}>
+                    <td data-label="작성일" style={{padding: '14px', textAlign: 'center', color: '#999', fontSize: '13px', whiteSpace: 'nowrap'}}>
                       {new Date(post.createdAt).toLocaleDateString()}
                     </td>
                     <td data-label="관리" style={{padding: '14px', textAlign: 'center'}}>
                       <button onClick={() => handleDelete(post.id)}
-                        style={{backgroundColor: '#fce4ec', color: '#e57373', fontWeight: '600', fontSize: '13px'}}>
+                        style={{backgroundColor: '#fce4ec', color: '#e57373', fontWeight: '600', fontSize: '13px', whiteSpace: 'nowrap'}}>
                         삭제
                       </button>
                     </td>
