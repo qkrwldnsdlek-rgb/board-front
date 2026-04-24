@@ -55,7 +55,7 @@ function Home() {
                   marginBottom: 24,
                   boxShadow: '0 4px 20px rgba(92,107,192,0.3)',
         }}>
-                          <h1 style={{ margin: 0, fontSize: isMobile ? 22 : 32, fontWeight: 700 }}>👋 환영합니다!</h1>h1>
+                          <h1 style={{ margin: 0, fontSize: isMobile ? 22 : 32, fontWeight: 700 }}>👋 환영합니다!</h1>
                           <p style={{ margin: '10px 0 18px', fontSize: isMobile ? 13 : 16, opacity: 0.9 }}>
                                       자유롭게 소통하고 질문하는 커뮤니티입니다.
                           </p>p>
