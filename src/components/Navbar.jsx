@@ -5,21 +5,52 @@ import { supabase } from '../supabase';
 function Navbar({ onMenuClick }) {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
+      if (session?.user) loadProfile(session.user.id);
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      if (session?.user) loadProfile(session.user.id);
+      else setProfile(null);
     });
     return () => subscription.unsubscribe();
   }, []);
+
+  const loadProfile = async (userId) => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+    if (data) setProfile(data);
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate('/');
   };
+
+  const Avatar = () => (
+    <div onClick={() => navigate('/mypage')} className="desktop-menu" style={{cursor: 'pointer'}}>
+      {profile?.avatar_url ? (
+        <img src={profile.avatar_url} alt="프로필"
+          style={{width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover'}}
+        />
+      ) : (
+        <div style={{
+          width: '36px', height: '36px', borderRadius: '50%',
+          backgroundColor: '#5c6bc0', display: 'flex', alignItems: 'center',
+          justifyContent: 'center', fontSize: '16px', color: '#fff', fontWeight: '700'
+        }}>
+          {user?.email ? user.email[0].toUpperCase() : '?'}
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <nav style={{
@@ -48,17 +79,11 @@ function Navbar({ onMenuClick }) {
           </div>
         </div>
 
-        {/* 오른쪽: 이메일(데스크탑만) + 로그인/로그아웃(항상) */}
+        {/* 오른쪽 */}
         <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
           {user ? (
             <>
-              <span
-                onClick={() => navigate('/mypage')}
-                className="desktop-menu"
-                style={{fontSize: '14px', color: '#666', cursor: 'pointer'}}
-              >
-                {user.email || user.user_metadata?.name || '사용자'}
-              </span>
+              <Avatar />
               <button onClick={handleLogout} style={{
                 backgroundColor: '#f5f5f5', color: '#666',
                 padding: '8px 20px', borderRadius: '8px', fontWeight: '600', fontSize: '14px'

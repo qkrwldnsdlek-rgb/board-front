@@ -41,6 +41,20 @@ function MyPage() {
     }
   };
 
+  const handleDeleteAvatar = async () => {
+    if (!window.confirm('프로필 사진을 삭제하시겠습니까?')) return;
+    const { error } = await supabase
+      .from('profiles')
+      .update({ avatar_url: '' })
+      .eq('id', user.id);
+    if (!error) {
+      setProfile({ ...profile, avatar_url: '' });
+      setPreview(null);
+      setImageFile(null);
+      alert('프로필 사진이 삭제됐습니다!');
+    }
+  };
+
   const handleSave = async () => {
     setSaving(true);
     let avatarUrl = profile.avatar_url;
@@ -140,6 +154,19 @@ function MyPage() {
           )}
           <input type="file" accept="image/*" onChange={handleImageChange} style={{display: 'none'}} />
         </label>
+
+        {preview && (
+          <button
+            onClick={(e) => { e.preventDefault(); handleDeleteAvatar(); }}
+            style={{
+              marginTop: '8px', fontSize: '12px', color: '#e57373',
+              backgroundColor: 'transparent', border: 'none',
+              cursor: 'pointer', textDecoration: 'underline'
+            }}
+          >
+            사진 삭제
+          </button>
+        )}
 
         <div>
           <p style={{fontSize: '18px', fontWeight: '700', color: '#3f3f3f', marginBottom: '4px'}}>
