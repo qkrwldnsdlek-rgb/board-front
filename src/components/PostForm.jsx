@@ -8,22 +8,22 @@ function PostForm() {
   const navigate = useNavigate();
   const isEdit = !!id;
   const [user, setUser] = useState(null);
+  const [form, setForm] = useState({
+    title: '',
+    content: '',
+    author: '',
+    imageUrl: '',
+    category: '자유게시판',
+  });
+  const [imageFile, setImageFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
     });
   }, []);
-
-  const [form, setForm] = useState({
-    title: '',
-    content: '',
-    author: '',
-    imageUrl: '',
-  });
-  const [imageFile, setImageFile] = useState(null);
-  const [preview, setPreview] = useState(null);
-  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (isEdit) {
@@ -48,19 +48,15 @@ function PostForm() {
 
   const uploadImage = async () => {
     if (!imageFile) return form.imageUrl;
-  
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
       alert('로그인이 필요합니다.');
       return null;
     }
-
     const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${imageFile.name.split('.').pop()}`;
     const { error } = await supabase.storage
       .from('board-images')
-      .upload(fileName, imageFile, {
-        upsert: true
-      });
+      .upload(fileName, imageFile, { upsert: true });
     if (error) {
       alert('이미지 업로드 실패: ' + error.message);
       return null;
@@ -79,7 +75,6 @@ function PostForm() {
     setUploading(true);
     const imageUrl = await uploadImage();
     const postData = { ...form, imageUrl, userId: user?.id };
-
     if (isEdit) {
       api.put(`/posts/${id}`, postData).then(() => navigate(`/posts/${id}`));
     } else {
@@ -87,14 +82,6 @@ function PostForm() {
     }
     setUploading(false);
   };
-
-  const [form, setForm] = useState({
-    title: '',
-    content: '',
-    author: '',
-    imageUrl: '',
-    category: '자유게시판',
-  });
 
   return (
     <div style={{maxWidth: '700px', margin: '50px auto', padding: '0 24px'}}>
@@ -115,15 +102,8 @@ function PostForm() {
 
         <div style={{marginBottom: '20px'}}>
           <label style={{fontSize: '14px', fontWeight: '600', color: '#666', display: 'block', marginBottom: '8px'}}>카테고리</label>
-          <select
-            name="category"
-            value={form.category}
-            onChange={handleChange}
-            style={{
-              width: '100%', padding: '10px 14px', borderRadius: '10px',
-              border: '1.5px solid #e0e0e0', fontSize: '15px',
-              backgroundColor: '#fff', cursor: 'pointer'
-            }}
+          <select name="category" value={form.category} onChange={handleChange}
+            style={{width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1.5px solid #e0e0e0', fontSize: '15px', backgroundColor: '#fff', cursor: 'pointer'}}
           >
             <option value="공지사항">공지사항</option>
             <option value="자유게시판">자유게시판</option>
