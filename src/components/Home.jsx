@@ -11,7 +11,7 @@ const CATEGORIES = [
 function Home() {
   const navigate = useNavigate();
   const [recentPosts, setRecentPosts] = useState([]);
-  const [noticePosts, setNoticePosts] = useState([]);h
+  const [noticePosts, setNoticePosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
