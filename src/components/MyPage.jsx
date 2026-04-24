@@ -51,6 +51,7 @@ function MyPage() {
       setProfile({ ...profile, avatar_url: '' });
       setPreview(null);
       setImageFile(null);
+      window.dispatchEvent(new Event('profileUpdated'));
       alert('프로필 사진이 삭제됐습니다!');
     }
   };
@@ -89,6 +90,7 @@ function MyPage() {
     } else {
       alert('프로필이 저장됐습니다!');
       setProfile({ ...profile, avatar_url: avatarUrl });
+      window.dispatchEvent(new Event('profileUpdated'));
     }
     setSaving(false);
   };

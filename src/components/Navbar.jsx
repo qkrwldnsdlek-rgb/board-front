@@ -20,6 +20,15 @@ function Navbar({ onMenuClick }) {
     return () => subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    // 프로필 업데이트 이벤트 감지
+    const handleProfileUpdate = () => {
+      if (user) loadProfile(user.id);
+    };
+    window.addEventListener('profileUpdated', handleProfileUpdate);
+    return () => window.removeEventListener('profileUpdated', handleProfileUpdate);
+  }, [user]);
+
   const loadProfile = async (userId) => {
     const { data } = await supabase
       .from('profiles')
