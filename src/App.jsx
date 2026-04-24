@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
+import Home from './components/Home';
 import PostList from './components/PostList';
 import PostDetail from './components/PostDetail';
 import PostForm from './components/PostForm';
@@ -30,7 +31,8 @@ function App() {
           }}>
           <div style={{flex: 1, padding: '24px 0'}}>
             <Routes>
-              <Route path="/" element={<PostList />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/posts" element={<PostList />} />
               <Route path="/posts/:id" element={<PostDetail />} />
               <Route path="/posts/new" element={<PostForm />} />
               <Route path="/posts/:id/edit" element={<PostForm />} />

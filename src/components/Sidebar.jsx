@@ -29,9 +29,9 @@ function Sidebar({ isOpen, onClose }) {
 
   const handleCategory = (cat) => {
     if (cat === '전체') {
-      navigate('/');
+      navigate('/posts');
     } else {
-      navigate(`/?category=${encodeURIComponent(cat)}`);
+      navigate(`/posts?category=${encodeURIComponent(cat)}`);
     }
     onClose();
   };

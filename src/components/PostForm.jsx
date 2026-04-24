@@ -81,7 +81,7 @@ function PostForm() {
     if (isEdit) {
       api.put(`/posts/${id}`, postData).then(() => navigate(`/posts/${id}${categoryParam}`));
     } else {
-      api.post('/posts', postData).then(() => navigate(`/${categoryParam}`));
+      api.post('/posts', postData).then(() => navigate(`/posts${categoryParam}`));
     }
     setUploading(false);
   };

@@ -26,7 +26,7 @@ function PostDetail() {
 
   const handleDelete = () => {
     if (window.confirm('삭제하시겠습니까?')) {
-      api.delete(`/posts/${id}`).then(() => navigate(`/${categoryParam}`));
+      api.delete(`/posts/${id}`).then(() => navigate(`/posts${categoryParam}`));
     }
   };
 
@@ -108,7 +108,7 @@ function PostDetail() {
         {/* 버튼 */}
         <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
           <button
-            onClick={() => navigate(`/${categoryParam}`)}
+            onClick={() => navigate(`/posts${categoryParam}`)}
             style={{ backgroundColor: '#f5f5f5', color: '#888', fontWeight: '600' }}
           >
             목록
