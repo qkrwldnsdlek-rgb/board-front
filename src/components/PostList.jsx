@@ -62,7 +62,7 @@ function PostList() {
   };
 
   return (
-    <div style={{maxWidth: '860px', margin: '50px auto', padding: '0 24px'}}>
+    <div style={{maxWidth: '1100px', margin: '50px auto', padding: '0 24px'}}>
       <div style={{marginBottom: '24px'}}>
         <h1 style={{fontSize: '26px', fontWeight: '700', color: '#3f3f3f'}}>
           {category || '전체'} 게시판

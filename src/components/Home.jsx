@@ -45,7 +45,7 @@ function Home() {
   };
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto', padding: isMobile ? '0 16px' : '0 24px' }}>
+    <div style={{ maxWidth: 1100, margin: '0 auto', padding: isMobile ? '0 16px' : '0 32px' }}>
 
       <div style={{
         background: 'linear-gradient(135deg, #9fa8da 0%, #90caf9 100%)',

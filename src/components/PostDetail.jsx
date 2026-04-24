@@ -43,7 +43,7 @@ function PostDetail() {
   );
 
   return (
-    <div style={{maxWidth: '700px', margin: '50px auto', padding: '0 24px'}}>
+    <div style={{maxWidth: '1100px', margin: '50px auto', padding: '0 24px'}}>
       <div style={{backgroundColor: '#fff', borderRadius: '20px', boxShadow: '0 2px 16px rgba(0,0,0,0.08)', padding: '40px'}}>
         <h1 style={{fontSize: '26px', fontWeight: '700', color: '#3f3f3f', marginBottom: '16px'}}>
           {post.title}

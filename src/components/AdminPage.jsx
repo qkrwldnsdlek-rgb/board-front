@@ -49,7 +49,7 @@ function AdminPage() {
   if (!user) return null;
 
   return (
-    <div style={{maxWidth: '960px', margin: '50px auto', padding: '0 24px'}}>
+    <div style={{maxWidth: '1100px', margin: '50px auto', padding: '0 24px'}}>
       <h1 style={{fontSize: '24px', fontWeight: '700', color: '#3f3f3f', marginBottom: '24px'}}>
         🛠️ 관리자 페이지
       </h1>
