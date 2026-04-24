@@ -8,6 +8,7 @@ function MyPage() {
   const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -103,39 +104,43 @@ function MyPage() {
         marginBottom: '16px'
       }}>
         {/* 아바타 */}
-        <div style={{display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '24px'}}>
-          <div style={{position: 'relative'}}>
-            {preview ? (
-              <img src={preview} alt="프로필"
-                style={{width: '64px', height: '64px', borderRadius: '50%', objectFit: 'cover'}}
-              />
-            ) : (
-              <div style={{
-                width: '64px', height: '64px', borderRadius: '50%',
-                backgroundColor: '#5c6bc0', display: 'flex', alignItems: 'center',
-                justifyContent: 'center', fontSize: '28px', color: '#fff', fontWeight: '700'
-              }}>
-                {user.email ? user.email[0].toUpperCase() : '?'}
-              </div>
-            )}
-            <label style={{
-              position: 'absolute', bottom: 0, right: 0,
-              backgroundColor: '#5c6bc0', borderRadius: '50%',
-              width: '22px', height: '22px', display: 'flex',
-              alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer', fontSize: '12px'
-            }}>
-              📷
-              <input type="file" accept="image/*" onChange={handleImageChange} style={{display: 'none'}} />
-            </label>
+      <label
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={{
+          position: 'relative', width: '100px', height: '100px',
+          borderRadius: '50%', cursor: 'pointer', display: 'block'
+        }}
+      >
+        {/* 이미지 또는 기본 아바타 */}
+        {preview ? (
+          <img src={preview} alt="프로필"
+            style={{width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover'}}
+          />
+        ) : (
+          <div style={{
+            width: '100px', height: '100px', borderRadius: '50%',
+            backgroundColor: '#5c6bc0', display: 'flex', alignItems: 'center',
+            justifyContent: 'center', fontSize: '40px', color: '#fff', fontWeight: '700'
+          }}>
+            {user.email ? user.email[0].toUpperCase() : '?'}
           </div>
-          <div>
-            <p style={{fontSize: '18px', fontWeight: '700', color: '#3f3f3f', marginBottom: '4px'}}>
-              {profile.nickname || user.email || '회원'}
-            </p>
-            <p style={{fontSize: '14px', color: '#999'}}>{user.email || '이메일 없음'}</p>
+        )}
+
+        {/* hover 오버레이 */}
+        {hovered && (
+          <div style={{
+            position: 'absolute', top: 0, left: 0,
+            width: '100px', height: '100px', borderRadius: '50%',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '28px'
+          }}>
+            📷
           </div>
-        </div>
+        )}
+        <input type="file" accept="image/*" onChange={handleImageChange} style={{display: 'none'}} />
+      </label>
 
         {/* 닉네임 입력 */}
         <div style={{marginBottom: '16px'}}>
