@@ -1,12 +1,15 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import api from '../api';
 import { supabase } from '../supabase';
 
 function Sidebar({ isOpen, onClose }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [stats, setStats] = useState({ todayVisit: 0, totalPosts: 0 });
   const [user, setUser] = useState(null);
+
+  const currentCategory = new URLSearchParams(location.search).get('category') || '전체';
 
   useEffect(() => {
     api.get('/stats').then(res => setStats(res.data));
@@ -21,6 +24,15 @@ function Sidebar({ isOpen, onClose }) {
     });
     return () => subscription.unsubscribe();
   }, []);
+
+  const handleCategory = (cat) => {
+    if (cat === '전체') {
+      navigate('/');
+    } else {
+      navigate(`/?category=${encodeURIComponent(cat)}`);
+    }
+    onClose();
+  };
 
   return (
     <>
@@ -74,12 +86,17 @@ function Sidebar({ isOpen, onClose }) {
           <p style={{fontSize: '11px', fontWeight: '700', color: '#bbb', letterSpacing: '1px', marginBottom: '12px'}}>CATEGORY</p>
           <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
             {['전체', '공지사항', '자유게시판', '질문'].map((cat) => (
-              <li key={cat} style={{
-                padding: '10px 12px', borderRadius: '8px', cursor: 'pointer',
-                color: '#444', fontWeight: '500', fontSize: '14px', marginBottom: '4px'
-              }}
+              <li key={cat}
+                onClick={() => handleCategory(cat)}
+                style={{
+                  padding: '10px 12px', borderRadius: '8px', cursor: 'pointer',
+                  color: currentCategory === cat ? '#5c6bc0' : '#444',
+                  fontWeight: currentCategory === cat ? '700' : '500',
+                  fontSize: '14px', marginBottom: '4px',
+                  backgroundColor: currentCategory === cat ? '#f0f2ff' : 'transparent'
+                }}
                 onMouseEnter={e => e.currentTarget.style.background = '#f0f2ff'}
-                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                onMouseLeave={e => e.currentTarget.style.background = currentCategory === cat ? '#f0f2ff' : 'transparent'}
               >
                 {cat}
               </li>

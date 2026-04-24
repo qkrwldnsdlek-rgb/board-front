@@ -88,6 +88,14 @@ function PostForm() {
     setUploading(false);
   };
 
+  const [form, setForm] = useState({
+    title: '',
+    content: '',
+    author: '',
+    imageUrl: '',
+    category: '자유게시판',
+  });
+
   return (
     <div style={{maxWidth: '700px', margin: '50px auto', padding: '0 24px'}}>
       <div style={{backgroundColor: '#fff', borderRadius: '20px', boxShadow: '0 2px 16px rgba(0,0,0,0.08)', padding: '40px'}}>
@@ -103,6 +111,24 @@ function PostForm() {
         <div style={{marginBottom: '20px'}}>
           <label style={{fontSize: '14px', fontWeight: '600', color: '#666', display: 'block', marginBottom: '8px'}}>작성자</label>
           <input name="author" value={form.author} onChange={handleChange} placeholder="작성자를 입력하세요" />
+        </div>
+
+        <div style={{marginBottom: '20px'}}>
+          <label style={{fontSize: '14px', fontWeight: '600', color: '#666', display: 'block', marginBottom: '8px'}}>카테고리</label>
+          <select
+            name="category"
+            value={form.category}
+            onChange={handleChange}
+            style={{
+              width: '100%', padding: '10px 14px', borderRadius: '10px',
+              border: '1.5px solid #e0e0e0', fontSize: '15px',
+              backgroundColor: '#fff', cursor: 'pointer'
+            }}
+          >
+            <option value="공지사항">공지사항</option>
+            <option value="자유게시판">자유게시판</option>
+            <option value="질문">질문</option>
+          </select>
         </div>
 
         <div style={{marginBottom: '20px'}}>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../api';
 import { supabase } from '../supabase';
 
@@ -11,6 +11,13 @@ function PostList() {
   const [searchInput, setSearchInput] = useState('');
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const category = new URLSearchParams(location.search).get('category') || '';
+
+  useEffect(() => {
+    setPage(0);
+  }, [category]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -23,11 +30,14 @@ function PostList() {
   }, []);
 
   useEffect(() => {
-    api.get(`/posts?page=${page}&size=10${keyword ? `&keyword=${keyword}` : ''}`).then(res => {
+    let url = `/posts?page=${page}&size=10`;
+    if (keyword) url += `&keyword=${keyword}`;
+    if (category) url += `&category=${encodeURIComponent(category)}`;
+    api.get(url).then(res => {
       setPosts(res.data.content);
       setTotalPages(res.data.totalPages);
     });
-  }, [page, keyword]);
+  }, [page, keyword, category]);
 
   const handleSearch = () => {
     setPage(0);
@@ -36,8 +46,11 @@ function PostList() {
 
   const handleDelete = (id) => {
     if (window.confirm('삭제하시겠습니까?')) {
+      let url = `/posts?page=${page}&size=10`;
+      if (keyword) url += `&keyword=${keyword}`;
+      if (category) url += `&category=${encodeURIComponent(category)}`;
       api.delete(`/posts/${id}`).then(() => {
-        api.get(`/posts?page=${page}&size=10${keyword ? `&keyword=${keyword}` : ''}`).then(res => {
+        api.get(url).then(res => {
           setPosts(res.data.content);
           setTotalPages(res.data.totalPages);
         });
@@ -48,7 +61,9 @@ function PostList() {
   return (
     <div style={{maxWidth: '860px', margin: '50px auto', padding: '0 24px'}}>
       <div style={{marginBottom: '24px'}}>
-        <h1 style={{fontSize: '26px', fontWeight: '700', color: '#3f3f3f'}}>게시판</h1>
+        <h1 style={{fontSize: '26px', fontWeight: '700', color: '#3f3f3f'}}>
+          {category || '전체'} 게시판
+        </h1>
       </div>
 
       {/* 검색창 */}
