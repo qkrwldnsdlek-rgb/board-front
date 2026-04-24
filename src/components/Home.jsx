@@ -11,7 +11,7 @@ const CATEGORIES = [
 function Home() {
   const navigate = useNavigate();
   const [recentPosts, setRecentPosts] = useState([]);
-  const [noticePosts, setNoticePosts] = useState([]);
+  const [noticePosts, setNoticePosts] = useState([]);h
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -42,7 +42,7 @@ function Home() {
 
       {/* Hero */}
       <div style={{
-        background: 'linear-gradient(135deg, #5c6bc0 0%, #42a5f5 100%)',
+        background: 'linear-gradient(135deg, #9fa8da 0%, #90caf9 100%)',
         borderRadius: 16,
         padding: '48px 40px',
         color: '#fff',
