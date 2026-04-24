@@ -22,6 +22,13 @@ function PostForm() {
   const [preview, setPreview] = useState(null);
   const [uploading, setUploading] = useState(false);
 
+  const fromAdmin = new URLSearchParams(location.search).get('from') === 'admin';
+
+  const goBack = () => {
+    if (fromAdmin) navigate('/admin');
+    else navigate(`/posts${categoryParam}`);
+  };
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
@@ -79,7 +86,7 @@ function PostForm() {
     const imageUrl = await uploadImage();
     const postData = { ...form, imageUrl, userId: user?.id };
     if (isEdit) {
-      api.put(`/posts/${id}`, postData).then(() => navigate(`/posts/${id}${categoryParam}`));
+      api.put(`/posts/${id}`, postData).then(() => navigate(`/posts/${id}${fromAdmin ? '?from=admin' : categoryParam}`));
     } else {
       api.post('/posts', postData).then(() => navigate(`/posts${categoryParam}`));
     }
@@ -128,7 +135,7 @@ function PostForm() {
         </div>
 
         <div style={{display: 'flex', gap: '10px', justifyContent: 'flex-end'}}>
-          <button onClick={() => navigate(`/posts${categoryParam}`)} style={{backgroundColor: '#f5f5f5', color: '#888', fontWeight: '600'}}>취소</button>
+          <button onClick={goBack} style={{backgroundColor: '#f5f5f5', color: '#888', fontWeight: '600'}}>취소</button>
           <button onClick={handleSubmit} disabled={uploading}
             style={{backgroundColor: '#5c6bc0', color: '#fff', fontWeight: '600', padding: '10px 24px'}}>
             {uploading ? '업로드 중...' : isEdit ? '수정 완료' : '등록'}

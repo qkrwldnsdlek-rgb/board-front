@@ -78,10 +78,10 @@ function PostDetail() {
           </button>
           {user && user.id === post.userId && (
             <>
-              <button onClick={() => navigate(`/posts/${id}/edit${categoryParam}`)}
-                style={{ backgroundColor: '#e8eaf6', color: '#5c6bc0', fontWeight: '600' }}>
-                수정
-              </button>
+              <button onClick={() => navigate(`/posts/${id}/edit${fromAdmin ? '?from=admin' : categoryParam}`)}
+              style={{ backgroundColor: '#e8eaf6', color: '#5c6bc0', fontWeight: '600' }}>
+              수정
+            </button>
               <button onClick={handleDelete} style={{ backgroundColor: '#fce4ec', color: '#e57373', fontWeight: '600' }}>
                 삭제
               </button>
