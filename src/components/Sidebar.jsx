@@ -9,7 +9,7 @@ function Sidebar({ isOpen, onClose }) {
   const [stats, setStats] = useState({ todayVisit: 0, totalPosts: 0 });
   const [user, setUser] = useState(null);
 
-  const currentCategory = location.pathname === '/' 
+  const currentCategory = location.pathname === '/posts'
   ? (new URLSearchParams(location.search).get('category') || '전체')
   : '';
 
