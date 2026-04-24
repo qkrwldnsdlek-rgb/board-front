@@ -109,8 +109,8 @@ function AdminPage() {
                   <th style={{padding: '14px', textAlign: 'left'}}>제목</th>
                   <th style={{padding: '14px', textAlign: 'center', width: '100px'}}>작성자</th>
                   <th style={{padding: '14px', textAlign: 'center', width: '100px'}}>카테고리</th>
-                  <th style={{padding: '14px', textAlign: 'center', width: '120px'}}>작성일</th>
-                  <th style={{padding: '14px', textAlign: 'center', width: '120px'}}>관리</th>
+                  <th style={{padding: '14px', textAlign: 'center', width: '100px'}}>작성일</th>
+                  <th style={{padding: '14px', textAlign: 'center', width: '100px'}}>관리</th>
                 </tr>
               </thead>
               <tbody>
