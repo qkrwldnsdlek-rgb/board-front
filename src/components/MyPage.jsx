@@ -103,44 +103,51 @@ function MyPage() {
         boxShadow: '0 2px 16px rgba(0,0,0,0.08)', padding: '32px',
         marginBottom: '16px'
       }}>
-        {/* 아바타 */}
-      <label
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        style={{
-          position: 'relative', width: '100px', height: '100px',
-          borderRadius: '50%', cursor: 'pointer', display: 'block'
-        }}
-      >
-        {/* 이미지 또는 기본 아바타 */}
-        {preview ? (
-          <img src={preview} alt="프로필"
-            style={{width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover'}}
-          />
-        ) : (
-          <div style={{
-            width: '100px', height: '100px', borderRadius: '50%',
-            backgroundColor: '#5c6bc0', display: 'flex', alignItems: 'center',
-            justifyContent: 'center', fontSize: '40px', color: '#fff', fontWeight: '700'
-          }}>
-            {user.email ? user.email[0].toUpperCase() : '?'}
-          </div>
-        )}
+        {/* 아바타 + 정보 */}
+      <div style={{display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '24px'}}>
+        <label
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          style={{
+            position: 'relative', width: '100px', height: '100px',
+            borderRadius: '50%', cursor: 'pointer', display: 'block', flexShrink: 0
+          }}
+        >
+          {/* 이미지 또는 기본 아바타 */}
+          {preview ? (
+            <img src={preview} alt="프로필"
+              style={{width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover'}}
+            />
+          ) : (
+            <div style={{
+              width: '100px', height: '100px', borderRadius: '50%',
+              backgroundColor: '#5c6bc0', display: 'flex', alignItems: 'center',
+              justifyContent: 'center', fontSize: '40px', color: '#fff', fontWeight: '700'
+            }}>
+              {user.email ? user.email[0].toUpperCase() : '?'}
+            </div>
+          )}
+          {hovered && (
+            <div style={{
+              position: 'absolute', top: 0, left: 0,
+              width: '100px', height: '100px', borderRadius: '50%',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '28px'
+            }}>
+              📷
+            </div>
+          )}
+          <input type="file" accept="image/*" onChange={handleImageChange} style={{display: 'none'}} />
+        </label>
 
-        {/* hover 오버레이 */}
-        {hovered && (
-          <div style={{
-            position: 'absolute', top: 0, left: 0,
-            width: '100px', height: '100px', borderRadius: '50%',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '28px'
-          }}>
-            📷
-          </div>
-        )}
-        <input type="file" accept="image/*" onChange={handleImageChange} style={{display: 'none'}} />
-      </label>
+        <div>
+          <p style={{fontSize: '18px', fontWeight: '700', color: '#3f3f3f', marginBottom: '4px'}}>
+            {profile.nickname || '닉네임 없음'}
+          </p>
+          <p style={{fontSize: '14px', color: '#999'}}>{user.email || '이메일 없음'}</p>
+        </div>
+      </div>
 
         {/* 닉네임 입력 */}
         <div style={{marginBottom: '16px'}}>
