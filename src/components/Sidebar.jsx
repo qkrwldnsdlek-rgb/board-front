@@ -10,8 +10,8 @@ function Sidebar({ isOpen, onClose }) {
   const [user, setUser] = useState(null);
 
   const fromAdmin = new URLSearchParams(location.search).get('from') === 'admin';
-
-  const currentCategory = !fromAdmin && (location.pathname === '/posts' || location.pathname.startsWith('/posts/'))
+  const isPostsPage = !fromAdmin && (location.pathname === '/posts' || location.pathname.startsWith('/posts/'));
+  const currentCategory = isPostsPage
     ? (new URLSearchParams(location.search).get('category') || '전체')
     : '';
 
@@ -38,6 +38,15 @@ function Sidebar({ isOpen, onClose }) {
     onClose();
   };
 
+  const menuItem = (path, label) => {
+    const isActive = location.pathname === path || (path === '/admin' && fromAdmin);
+    return {
+      color: isActive ? '#5c6bc0' : '#444',
+      fontWeight: isActive ? '700' : '500',
+      backgroundColor: isActive ? '#f0f2ff' : 'transparent',
+    };
+  };
+
   return (
     <>
       {isOpen && (
@@ -48,15 +57,9 @@ function Sidebar({ isOpen, onClose }) {
       )}
 
       <aside className={`sidebar ${isOpen ? 'open' : ''}`} style={{
-        width: '240px',
-        minHeight: '100vh',
-        backgroundColor: '#fff',
-        borderRight: '1px solid #eee',
-        padding: '24px 16px',
-        position: 'fixed',
-        top: '60px',
-        left: 0,
-        zIndex: 999,
+        width: '240px', minHeight: '100vh', backgroundColor: '#fff',
+        borderRight: '1px solid #eee', padding: '24px 16px',
+        position: 'fixed', top: '60px', left: 0, zIndex: 999,
       }}>
         <div style={{marginBottom: '32px'}}>
           <p style={{fontSize: '11px', fontWeight: '700', color: '#bbb', letterSpacing: '1px', marginBottom: '12px'}}>MENU</p>
@@ -64,13 +67,11 @@ function Sidebar({ isOpen, onClose }) {
             <li onClick={() => { navigate('/'); onClose(); }} style={{
               display: 'flex', alignItems: 'center', gap: '10px',
               padding: '10px 12px', borderRadius: '8px', cursor: 'pointer',
-              color: location.pathname === '/' ? '#5c6bc0' : '#444',
-              fontWeight: location.pathname === '/' ? '700' : '500',
               fontSize: '14px', marginBottom: '4px',
-              backgroundColor: location.pathname === '/' ? '#f0f2ff' : 'transparent'
+              ...menuItem('/')
             }}
               onMouseEnter={e => e.currentTarget.style.background = '#f0f2ff'}
-              onMouseLeave={e => e.currentTarget.style.background = location.pathname === '/' ? '#f0f2ff' : 'transparent'}
+              onMouseLeave={e => e.currentTarget.style.background = menuItem('/').backgroundColor}
             >
               🏠 홈
             </li>
@@ -78,36 +79,28 @@ function Sidebar({ isOpen, onClose }) {
               <li onClick={() => { navigate('/mypage'); onClose(); }} style={{
                 display: 'flex', alignItems: 'center', gap: '10px',
                 padding: '10px 12px', borderRadius: '8px', cursor: 'pointer',
-                color: location.pathname === '/mypage' ? '#5c6bc0' : '#444',
-                fontWeight: location.pathname === '/mypage' ? '700' : '500',
                 fontSize: '14px', marginBottom: '4px',
-                backgroundColor: location.pathname === '/mypage' ? '#f0f2ff' : 'transparent'
+                ...menuItem('/mypage')
               }}
                 onMouseEnter={e => e.currentTarget.style.background = '#f0f2ff'}
-                onMouseLeave={e => e.currentTarget.style.background = location.pathname === '/mypage' ? '#f0f2ff' : 'transparent'}
+                onMouseLeave={e => e.currentTarget.style.background = menuItem('/mypage').backgroundColor}
               >
                 👤 마이페이지
               </li>
             )}
-
-
             {user?.email === 'qkrwldnsdlek@gmail.com' && (
               <li onClick={() => { navigate('/admin'); onClose(); }} style={{
                 display: 'flex', alignItems: 'center', gap: '10px',
                 padding: '10px 12px', borderRadius: '8px', cursor: 'pointer',
-                color: location.pathname === '/admin' ? '#5c6bc0' : '#444',
-                fontWeight: location.pathname === '/admin' ? '700' : '500',
                 fontSize: '14px', marginBottom: '4px',
-                backgroundColor: location.pathname === '/admin' ? '#f0f2ff' : 'transparent'
+                ...menuItem('/admin')
               }}
                 onMouseEnter={e => e.currentTarget.style.background = '#f0f2ff'}
-                onMouseLeave={e => e.currentTarget.style.background = location.pathname === '/admin' ? '#f0f2ff' : 'transparent'}
+                onMouseLeave={e => e.currentTarget.style.background = menuItem('/admin').backgroundColor}
               >
                 🛠️ 관리자
               </li>
             )}
-
-
           </ul>
         </div>
 

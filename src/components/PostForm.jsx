@@ -128,7 +128,7 @@ function PostForm() {
         </div>
 
         <div style={{display: 'flex', gap: '10px', justifyContent: 'flex-end'}}>
-          <button onClick={() => navigate(-1)} style={{backgroundColor: '#f5f5f5', color: '#888', fontWeight: '600'}}>취소</button>
+          <button onClick={() => navigate(`/posts${categoryParam}`)} style={{backgroundColor: '#f5f5f5', color: '#888', fontWeight: '600'}}>취소</button>
           <button onClick={handleSubmit} disabled={uploading}
             style={{backgroundColor: '#5c6bc0', color: '#fff', fontWeight: '600', padding: '10px 24px'}}>
             {uploading ? '업로드 중...' : isEdit ? '수정 완료' : '등록'}
