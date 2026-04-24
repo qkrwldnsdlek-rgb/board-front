@@ -72,7 +72,7 @@ function PostList() {
           value={searchInput}
           onChange={e => setSearchInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleSearch()}
-          placeholder="제목으로 검색..."
+          placeholder="제목 또는 내용으로 검색"
           style={{flex: 1, padding: '10px 14px', borderRadius: '10px', border: '1.5px solid #e0e0e0', fontSize: '15px'}}
         />
         <button onClick={handleSearch} style={{backgroundColor: '#5c6bc0', color: '#fff', padding: '10px 20px', borderRadius: '10px', fontWeight: '600'}}>
