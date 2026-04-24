@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import api from '../api';
 import { supabase } from '../supabase';
 
@@ -7,6 +7,9 @@ function PostForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEdit = !!id;
+  const location = useLocation();
+  const category = new URLSearchParams(location.search).get('category') || '';
+  const categoryParam = category ? `?category=${encodeURIComponent(category)}` : '';
   const [user, setUser] = useState(null);
   const [form, setForm] = useState({
     title: '',
@@ -76,9 +79,9 @@ function PostForm() {
     const imageUrl = await uploadImage();
     const postData = { ...form, imageUrl, userId: user?.id };
     if (isEdit) {
-      api.put(`/posts/${id}`, postData).then(() => navigate(`/posts/${id}`));
+      api.put(`/posts/${id}`, postData).then(() => navigate(`/posts/${id}${categoryParam}`));
     } else {
-      api.post('/posts', postData).then(() => navigate('/'));
+      api.post('/posts', postData).then(() => navigate(`/${categoryParam}`));
     }
     setUploading(false);
   };

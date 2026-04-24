@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import api from '../api';
 import { supabase } from '../supabase';
 
@@ -8,7 +8,11 @@ function PostDetail() {
   const [post, setPost] = useState(null);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const [showModal, setShowModal] = useState(false);
+
+  const category = new URLSearchParams(location.search).get('category') || '';
+  const categoryParam = category ? `?category=${encodeURIComponent(category)}` : '';
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -22,7 +26,7 @@ function PostDetail() {
 
   const handleDelete = () => {
     if (window.confirm('삭제하시겠습니까?')) {
-      api.delete(`/posts/${id}`).then(() => navigate('/'));
+      api.delete(`/posts/${id}`).then(() => navigate(`/${categoryParam}`));
     }
   };
 
@@ -104,7 +108,7 @@ function PostDetail() {
         {/* 버튼 */}
         <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate(`/${categoryParam}`)}
             style={{ backgroundColor: '#f5f5f5', color: '#888', fontWeight: '600' }}
           >
             목록
@@ -112,7 +116,7 @@ function PostDetail() {
           {user && user.id === post.userId && (
             <>
               <button
-                onClick={() => navigate(`/posts/${id}/edit`)}
+                onClick={() => navigate(`/posts/${id}/edit${categoryParam}`)}
                 style={{ backgroundColor: '#e8eaf6', color: '#5c6bc0', fontWeight: '600' }}
               >
                 수정

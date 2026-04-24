@@ -14,6 +14,7 @@ function PostList() {
   const location = useLocation();
 
   const category = new URLSearchParams(location.search).get('category') || '';
+  const categoryParam = category ? `?category=${encodeURIComponent(category)}` : '';
 
   useEffect(() => {
     setPage(0);
@@ -116,7 +117,7 @@ function PostList() {
                 >
                   <td data-label="번호" style={{padding: '14px', textAlign: 'center', color: '#999'}}>{page * 10 + index + 1}</td>
                   <td data-label="제목" style={{padding: '14px', fontWeight: 'bold'}}>
-                    <span onClick={() => navigate(`/posts/${post.id}`)}
+                    <span onClick={() => navigate(`/posts/${post.id}${categoryParam}`)}
                       style={{cursor: 'pointer', color: '#3d3d3d', fontWeight: '500'}}
                       onMouseEnter={e => e.target.style.color = '#5c6bc0'}
                       onMouseLeave={e => e.target.style.color = '#3d3d3d'}
@@ -142,7 +143,7 @@ function PostList() {
                     <td data-label="관리" style={{padding: '14px', textAlign: 'center', whiteSpace: 'nowrap'}}>
                       {user.id === post.userId && (
                         <>
-                          <button onClick={() => navigate(`/posts/${post.id}/edit`)} style={{backgroundColor: '#e8eaf6', color: '#5c6bc0', marginRight: '6px', fontWeight: '600'}}>수정</button>
+                          <button onClick={() => navigate(`/posts/${post.id}/edit${categoryParam}`)} style={{backgroundColor: '#e8eaf6', color: '#5c6bc0', marginRight: '6px', fontWeight: '600'}}>수정</button>
                           <button onClick={() => handleDelete(post.id)} style={{backgroundColor: '#fce4ec', color: '#e57373', fontWeight: '600'}}>삭제</button>
                         </>
                       )}
@@ -185,7 +186,7 @@ function PostList() {
       {/* 글쓰기 버튼 */}
       {user && (
         <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '16px'}}>
-          <button onClick={() => navigate('/posts/new')} style={{backgroundColor: '#5c6bc0', color: '#fff', padding: '10px 20px', borderRadius: '10px', fontWeight: '600'}}>
+          <button onClick={() => navigate(`/posts/new${categoryParam}`)} style={{backgroundColor: '#5c6bc0', color: '#fff', padding: '10px 20px', borderRadius: '10px', fontWeight: '600'}}>
             + 글쓰기
           </button>
         </div>
