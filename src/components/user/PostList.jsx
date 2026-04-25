@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import api from '../api';
-import { supabase } from '../supabase';
+import api from '../../api';
+import { supabase } from '../../supabase';
 
 function PostList() {
   const [posts, setPosts] = useState([]);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import api from '../api';
-import { supabase } from '../supabase';
+import api from '../../api';
+import { supabase } from '../../supabase';
 
 function PostDetail() {
   const { id } = useParams();
@@ -14,12 +14,17 @@ function PostDetail() {
   const category = new URLSearchParams(location.search).get('category') || '';
   const fromAdmin = new URLSearchParams(location.search).get('from') === 'admin';
   const categoryParam = category ? `?category=${encodeURIComponent(category)}` : '';
-
   const tab = new URLSearchParams(location.search).get('tab') || 'dashboard';
 
   const goBack = () => {
     if (fromAdmin) navigate(`/admin?tab=${tab}`);
     else navigate(`/posts${categoryParam}`);
+  };
+
+  const getYoutubeEmbedUrl = (url) => {
+    if (!url) return null;
+    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/);
+    return match ? `https://www.youtube.com/embed/${match[1]}` : null;
   };
 
   useEffect(() => {
@@ -57,6 +62,7 @@ function PostDetail() {
         <p style={{fontSize: '16px', lineHeight: '1.9', color: '#444', whiteSpace: 'pre-wrap', minHeight: '200px'}}>
           {post.content}
         </p>
+
         {post.imageUrl && (
           <>
             <div style={{marginBottom: '32px'}}>
@@ -73,6 +79,22 @@ function PostDetail() {
             )}
           </>
         )}
+
+        {post.youtubeUrl && getYoutubeEmbedUrl(post.youtubeUrl) && (
+          <div style={{marginBottom: '32px'}}>
+            <iframe
+              key={post.youtubeUrl}
+              width="100%"
+              height="450"
+              src={getYoutubeEmbedUrl(post.youtubeUrl)}
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              style={{borderRadius: '12px'}}
+            />
+          </div>
+        )}
+
         <hr style={{ border: 'none', borderTop: '1px solid #f0f0f0', margin: '32px 0' }} />
         <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
           <button onClick={goBack} style={{ backgroundColor: '#f5f5f5', color: '#888', fontWeight: '600' }}>
@@ -81,9 +103,9 @@ function PostDetail() {
           {user && user.id === post.userId && (
             <>
               <button onClick={() => navigate(`/posts/${id}/edit${fromAdmin ? '?from=admin&tab=posts' : categoryParam}`)}
-              style={{ backgroundColor: '#e8eaf6', color: '#5c6bc0', fontWeight: '600' }}>
-              수정
-            </button>
+                style={{ backgroundColor: '#e8eaf6', color: '#5c6bc0', fontWeight: '600' }}>
+                수정
+              </button>
               <button onClick={handleDelete} style={{ backgroundColor: '#fce4ec', color: '#e57373', fontWeight: '600' }}>
                 삭제
               </button>

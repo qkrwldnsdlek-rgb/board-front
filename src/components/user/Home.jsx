@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../api';
+import api from '../../api';
 
 const CATEGORIES = [
   { label: '📢 공지사항', value: '공지사항', color: '#e53935', bg: '#ffebee' },

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import api from '../api';
-import { supabase } from '../supabase';
+import api from '../../api';
+import { supabase } from '../../supabase';
 
 function PostForm() {
   const { id } = useParams();
@@ -17,13 +17,13 @@ function PostForm() {
     author: '',
     imageUrl: '',
     category: '자유게시판',
+    youtubeUrl: '',
   });
   const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [uploading, setUploading] = useState(false);
 
   const fromAdmin = new URLSearchParams(location.search).get('from') === 'admin';
-
   const tab = new URLSearchParams(location.search).get('tab') || 'dashboard';
 
   const goBack = () => {
@@ -119,18 +119,25 @@ function PostForm() {
           <label style={{fontSize: '14px', fontWeight: '600', color: '#666', display: 'block', marginBottom: '8px'}}>작성자</label>
           <input name="author" value={form.author} onChange={handleChange} placeholder="작성자를 입력하세요" />
         </div>
-{(!category || user?.email === ADMIN_EMAIL) && (
-        <div style={{marginBottom: '20px'}}>
-          <label style={{fontSize: '14px', fontWeight: '600', color: '#666', display: 'block', marginBottom: '8px'}}>카테고리</label>
-          <select name="category" value={form.category} onChange={handleChange}
-            style={{width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1.5px solid #e0e0e0', fontSize: '15px', backgroundColor: '#fff', cursor: 'pointer'}}
-          >
-            <option value="공지사항">공지사항</option>
-            <option value="자유게시판">자유게시판</option>
-            <option value="질문">질문</option>
-          </select>
+
+        {(!category || user?.email === ADMIN_EMAIL) && (
+          <div style={{marginBottom: '20px'}}>
+            <label style={{fontSize: '14px', fontWeight: '600', color: '#666', display: 'block', marginBottom: '8px'}}>카테고리</label>
+            <select name="category" value={form.category} onChange={handleChange}
+              style={{width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1.5px solid #e0e0e0', fontSize: '15px', backgroundColor: '#fff', cursor: 'pointer'}}
+            >
+              <option value="공지사항">공지사항</option>
+              <option value="자유게시판">자유게시판</option>
+              <option value="질문">질문</option>
+            </select>
+          </div>
+        )}
+
+        <div style={{marginBottom: '32px'}}>
+          <label style={{fontSize: '14px', fontWeight: '600', color: '#666', display: 'block', marginBottom: '8px'}}>내용</label>
+          <textarea name="content" value={form.content} onChange={handleChange} placeholder="내용을 입력하세요" rows={10} style={{resize: 'vertical'}} />
         </div>
-)}
+
         <div style={{marginBottom: '20px'}}>
           <label style={{fontSize: '14px', fontWeight: '600', color: '#666', display: 'block', marginBottom: '8px'}}>이미지 첨부</label>
           <input type="file" accept="image/*" onChange={handleImageChange} />
@@ -139,9 +146,14 @@ function PostForm() {
           )}
         </div>
 
-        <div style={{marginBottom: '32px'}}>
-          <label style={{fontSize: '14px', fontWeight: '600', color: '#666', display: 'block', marginBottom: '8px'}}>내용</label>
-          <textarea name="content" value={form.content} onChange={handleChange} placeholder="내용을 입력하세요" rows={10} style={{resize: 'vertical'}} />
+        <div style={{marginBottom: '20px'}}>
+          <label style={{fontSize: '14px', fontWeight: '600', color: '#666', display: 'block', marginBottom: '8px'}}>YouTube URL (선택)</label>
+          <input
+            name="youtubeUrl"
+            value={form.youtubeUrl}
+            onChange={handleChange}
+            placeholder="https://www.youtube.com/watch?v=..."
+          />
         </div>
 
         <div style={{display: 'flex', gap: '10px', justifyContent: 'flex-end'}}>

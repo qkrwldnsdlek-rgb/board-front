@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { supabase } from '../supabase';
-import api from '../api';
+import { supabase } from '../../supabase';
+import api from '../../api';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
@@ -107,9 +107,11 @@ function AdminPage() {
                 <tr style={{backgroundColor: '#f0f2ff', color: '#5c6bc0'}}>
                   <th style={{padding: '14px', textAlign: 'center', width: '60px'}}>번호</th>
                   <th style={{padding: '14px', textAlign: 'left'}}>제목</th>
+                  <th style={{padding: '14px', textAlign: 'center', width: '80px'}}>이미지</th>
                   <th style={{padding: '14px', textAlign: 'center', width: '100px'}}>작성자</th>
                   <th style={{padding: '14px', textAlign: 'center', width: '120px'}}>카테고리</th>
                   <th style={{padding: '14px', textAlign: 'center', width: '100px'}}>작성일</th>
+                  <th style={{padding: '14px', textAlign: 'center', width: '80px'}}>조회수</th>
                   <th style={{padding: '14px', textAlign: 'center', width: '100px'}}>관리</th>
                 </tr>
               </thead>
@@ -129,6 +131,12 @@ function AdminPage() {
                         {post.title}
                       </span>
                     </td>
+                    <td data-label="이미지" style={{padding: '14px', textAlign: 'center'}}>
+                      {post.imageUrl
+                        ? <img src={post.imageUrl} alt="이미지" style={{width: '40px', height: '40px', objectFit: 'cover', borderRadius: '6px'}} />
+                        : <span style={{color: '#ccc', fontSize: '12px'}}>-</span>
+                      }
+                    </td>
                     <td data-label="작성자" style={{padding: '14px', textAlign: 'center', color: '#666'}}>{post.author}</td>
                     <td data-label="카테고리" style={{padding: '14px', textAlign: 'center'}}>
                       <span style={{
@@ -141,6 +149,7 @@ function AdminPage() {
                     <td data-label="작성일" style={{padding: '14px', textAlign: 'center', color: '#999', fontSize: '13px'}}>
                       {new Date(post.createdAt).toLocaleDateString()}
                     </td>
+                    <td data-label="조회수" style={{padding: '14px', textAlign: 'center', color: '#666'}}>{post.viewCount}</td>
                     <td data-label="관리" style={{padding: '14px', textAlign: 'center'}}>
                       <button onClick={() => handleDelete(post.id)}
                         style={{backgroundColor: '#fce4ec', color: '#e57373', fontWeight: '600', fontSize: '13px'}}>

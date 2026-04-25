@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { supabase } from '../supabase';
+import { supabase } from '../../supabase';
 
 function Navbar({ onMenuClick }) {
   const navigate = useNavigate();
