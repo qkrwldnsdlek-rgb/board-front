@@ -56,7 +56,29 @@ function MyPage() {
     }
   };
 
+  const FORBIDDEN_NICKNAMES = [
+    '관리자', '매니저', '운영자', '시스템', '공식',
+    'admin', 'manager', 'system', 'official', 'operator',
+    '어드민', '스태프', 'staff', '봇', 'bot'
+  ];
+
   const handleSave = async () => {
+
+    const nickname = profile.nickname.trim();
+    if (!nickname) {
+      alert('닉네임을 입력해주세요.');
+      return;
+    }
+    if (nickname.length < 2 || nickname.length > 12) {
+      alert('닉네임은 2자 이상 12자 이하로 입력해주세요.');
+      return;
+    }
+    const isAdmin = user.email === import.meta.env.VITE_ADMIN_EMAIL;
+    if (!isAdmin && FORBIDDEN_NICKNAMES.some(word => nickname.toLowerCase().includes(word.toLowerCase()))) {
+      alert('사용할 수 없는 닉네임입니다.');
+      return;
+    }
+
     setSaving(true);
     let avatarUrl = profile.avatar_url;
 

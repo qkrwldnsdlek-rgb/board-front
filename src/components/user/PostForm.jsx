@@ -130,7 +130,14 @@ function PostForm() {
 
         <div style={{marginBottom: '20px'}}>
           <label style={{fontSize: '14px', fontWeight: '600', color: '#666', display: 'block', marginBottom: '8px'}}>작성자</label>
-          <input name="author" value={form.author} onChange={handleChange} placeholder="작성자를 입력하세요" />
+          <input
+            name="author"
+            value={form.author}
+            onChange={handleChange}
+            placeholder="작성자를 입력하세요"
+            disabled={!!profile?.nickname || isEdit}
+            style={{ opacity: (profile?.nickname || isEdit) ? 0.6 : 1, cursor: (profile?.nickname || isEdit) ? 'not-allowed' : 'text' }}
+          />
         </div>
 
         {(!category || user?.email === ADMIN_EMAIL) && (
@@ -163,7 +170,7 @@ function PostForm() {
           <label style={{fontSize: '14px', fontWeight: '600', color: '#666', display: 'block', marginBottom: '8px'}}>YouTube URL (선택)</label>
           <input
             name="youtubeUrl"
-            value={form.youtubeUrl}
+            value={form.youtubeUrl || ''}
             onChange={handleChange}
             placeholder="https://www.youtube.com/watch?v=..."
           />

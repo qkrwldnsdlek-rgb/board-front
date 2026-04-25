@@ -143,7 +143,7 @@ function PostList() {
                   </td>
                   {user && (
                     <td data-label="관리" style={{padding: '14px', textAlign: 'center', whiteSpace: 'nowrap'}}>
-                      {user.id === post.userId && (
+                      {(user.id === post.userId || user.email === ADMIN_EMAIL) && (
                         <>
                           <button onClick={() => navigate(`/posts/${post.id}/edit${categoryParam}`)} style={{backgroundColor: '#e8eaf6', color: '#5c6bc0', marginRight: '6px', fontWeight: '600'}}>수정</button>
                           <button onClick={() => handleDelete(post.id)} style={{backgroundColor: '#fce4ec', color: '#e57373', fontWeight: '600'}}>삭제</button>

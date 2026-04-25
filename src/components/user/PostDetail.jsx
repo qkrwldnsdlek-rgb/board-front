@@ -100,7 +100,7 @@ function PostDetail() {
           <button onClick={goBack} style={{ backgroundColor: '#f5f5f5', color: '#888', fontWeight: '600' }}>
             목록
           </button>
-          {user && user.id === post.userId && (
+          {user && (user.id === post.userId || user.email === import.meta.env.VITE_ADMIN_EMAIL) && (
             <>
               <button onClick={() => navigate(`/posts/${id}/edit${fromAdmin ? '?from=admin&tab=posts' : categoryParam}`)}
                 style={{ backgroundColor: '#e8eaf6', color: '#5c6bc0', fontWeight: '600' }}>
