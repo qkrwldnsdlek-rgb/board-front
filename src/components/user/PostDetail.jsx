@@ -234,15 +234,15 @@ function PostDetail() {
 
         {/* 3. 자식 대댓글 렌더링 섹션 */}
         {hasChildren && showChildren && (
-          <div style={{ marginTop: '12px', paddingLeft: '6px' }}>
+          <div style={{ marginTop: '12px', paddingLeft: '0px' }}>
             {children.map((child, index) => (
               <div key={child.id} style={{ position: 'relative' }}>
                 {/* [핵심] 'ㄴ'자 커넥터 라인 */}
                 <div style={{
                   position: 'absolute',
-                  left: '-38px', // 부모 아바타 중앙 위치로 조정
+                  left: '-32px', // 부모 아바타 중앙 위치로 조정
                   top: '-50px',  // 위쪽 대댓글과의 간격 연결
-                  width: '30px',
+                  width: '25px',
                   height: '82px', // 아바타 중간까지 내려옴
                   borderLeft: '1.5px solid #ebebeb',
                   borderBottom: '1.5px solid #ebebeb',
@@ -253,7 +253,7 @@ function PostDetail() {
                 {index !== children.length - 1 && (
                   <div style={{
                     position: 'absolute',
-                    left: '-38px',
+                    left: '-32px',
                     top: '7px',
                     bottom: '-12px',
                     borderLeft: '1.5px solid #ebebeb',
