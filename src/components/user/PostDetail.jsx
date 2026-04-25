@@ -218,7 +218,12 @@ function PostDetail() {
             <input value={editInput} onChange={e => setEditInput(e.target.value)}
               style={{ width: '100%', padding: '6px 0', border: 'none', borderBottom: '2px solid #5c6bc0', outline: 'none', fontSize: '14px', boxSizing: 'border-box' }}
             />
-            {/* ... 수정 버튼들 (기존과 동일) */}
+            <div style={{display: 'flex', gap: '8px', marginTop: '8px'}}>
+                      <button onClick={() => setEditingId(null)}
+                        style={{backgroundColor: 'transparent', color: '#888', border: 'none', cursor: 'pointer', fontWeight: '600', fontSize: '13px', padding: '6px 12px', borderRadius: '20px'}}>취소</button>
+                      <button onClick={() => handleCommentEdit(item.id)}
+                        style={{backgroundColor: '#5c6bc0', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: '600', fontSize: '13px', padding: '6px 16px', borderRadius: '20px'}}>저장</button>
+                    </div>
           </div>
         ) : (
           <p style={{ fontSize: '14px', color: '#444', margin: '0 0 8px' }}>{item.content}</p>
