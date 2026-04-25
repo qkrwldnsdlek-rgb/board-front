@@ -205,7 +205,7 @@ function PostDetail() {
       <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, width: '36px'}}>
         {getAvatar(item.author)}
         {hasChildren && showChildren && (
-          <div style={{width: '2px', flex: 1, backgroundColor: '#d0d0d0', marginTop: '4px'}} />
+          <div style={{width: '1px', flex: 1, backgroundColor: '#e5e7eb', marginTop: '4px'}} />
         )}
       </div>
 
@@ -238,20 +238,20 @@ function PostDetail() {
         {hasChildren && showChildren && (
           <div>
             {children.map(child => (
-              <div key={child.id} style={{position: 'relative', marginTop: '12px', paddingLeft: '48px'}}>
-                <div style={{
-                  position: 'absolute',
-                  left: '-30px',   // 부모 아바타 중심(18px) - content 시작(48px) = -30px
-                  top: '-4px',
-                  width: '78px',   // -30px에서 48px(자식 아바타 시작)까지
-                  height: '28px',
-                  borderLeft: '2px solid #d0d0d0',
-                  borderBottom: '2px solid #d0d0d0',
-                  borderBottomLeftRadius: '10px',
-                }} />
-                {renderNode(child, rootCommentId, false)}
-              </div>
-            ))}
+            <div key={child.id} style={{position: 'relative', marginTop: '12px', paddingLeft: '8px'}}>
+              <div style={{
+                position: 'absolute',
+                left: '-31px',   // 부모 아바타 중심(18px) - content 시작(48px) = -30px
+                top: '-7px',
+                width: '30px',   // -30px에서 48px(자식 아바타 시작)까지
+                height: '28px',
+                borderLeft: '1px solid #e5e7eb',
+                borderBottom: '1px solid #e5e7eb',
+                borderBottomLeftRadius: '30px',
+              }} />
+              {renderNode(child, rootCommentId, false)}
+            </div>
+          ))}
           </div>
         )}
 
