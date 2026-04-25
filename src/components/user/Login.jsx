@@ -32,9 +32,23 @@ function Login() {
     }
     setLoading(true);
     if (isSignUp) {
-      const { error } = await supabase.auth.signUp({ email, password });
-      if (error) alert('회원가입 실패: ' + error.message);
-      else alert('회원가입 성공! 이메일을 확인해주세요.');
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) {
+        alert('회원가입 실패: ' + error.message);
+      } else {
+        // 랜덤 닉네임 생성 후 profiles 저장
+        const adjectives = ['행복한', '신나는', '멋진', '귀여운', '씩씩한', '즐거운', '활발한', '엉뚱한'];
+        const nouns = ['호랑이', '토끼', '펭귄', '고양이', '강아지', '코알라', '판다', '여우'];
+        const number = Math.floor(Math.random() * 9000) + 1000;
+        const nickname = `${adjectives[Math.floor(Math.random() * adjectives.length)]}${nouns[Math.floor(Math.random() * nouns.length)]}${number}`;
+
+        await supabase.from('profiles').insert({
+          id: data.user.id,
+          nickname,
+        });
+
+        alert('회원가입 성공! 이메일을 확인해주세요.');
+      }
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) alert('로그인 실패: ' + error.message);

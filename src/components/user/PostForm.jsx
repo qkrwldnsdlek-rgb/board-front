@@ -32,10 +32,23 @@ function PostForm() {
   };
 
   const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
+  const [profile, setProfile] = useState(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      const u = session?.user ?? null;
+      setUser(u);
+      if (u) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('nickname')
+          .eq('id', u.id)
+          .single();
+        setProfile(data);
+        if (!isEdit && data?.nickname) {
+          setForm(prev => ({ ...prev, author: data.nickname }));
+        }
+      }
     });
   }, []);
 
