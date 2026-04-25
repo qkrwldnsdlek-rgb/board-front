@@ -79,11 +79,8 @@ function PostDetail() {
     if (!commentInput.trim()) return;
     if (!user) { alert('로그인이 필요합니다.'); return; }
     await api.post('/comments', {
-      postId: parseInt(id),
-      content: commentInput,
-      author: profile?.nickname || user.email,
-      userId: user.id,
-      parentId: null,
+      postId: parseInt(id), content: commentInput,
+      author: profile?.nickname || user.email, userId: user.id, parentId: null,
     });
     setCommentInput('');
     loadComments();
@@ -93,11 +90,8 @@ function PostDetail() {
     if (!replyInputText.trim()) return;
     if (!user) { alert('로그인이 필요합니다.'); return; }
     await api.post('/comments', {
-      postId: parseInt(id),
-      content: replyInputText,
-      author: profile?.nickname || user.email,
-      userId: user.id,
-      parentId: replyTargetId,
+      postId: parseInt(id), content: replyInputText,
+      author: profile?.nickname || user.email, userId: user.id, parentId: replyTargetId,
     });
     setActiveReplyId(null);
     setReplyInputText('');
@@ -156,80 +150,121 @@ function PostDetail() {
   );
 
   const parentComments = comments.filter(c => !c.parentId);
-  const getReplies = (parentId) => comments.filter(c => c.parentId === parentId);
+  const getDirectReplies = (parentId) => comments.filter(c => c.parentId === parentId);
 
-  const getAllRepliesCount = (parentId) => {
-    const direct = getReplies(parentId);
-    return direct.reduce((acc, reply) => acc + 1 + getAllRepliesCount(reply.id), 0);
+  const getAllDescendants = (commentId) => {
+    const result = [];
+    const collect = (pid) => {
+      const children = comments.filter(c => c.parentId === pid);
+      children.forEach(child => { result.push(child); collect(child.id); });
+    };
+    collect(commentId);
+    return result;
   };
 
-  const renderReplies = (parentId, rootCommentId) => {
-    const replies = getReplies(parentId);
-    if (replies.length === 0) return null;
-    return (
-      <div style={{
-        marginLeft: '20px',
-        paddingLeft: '16px',
-        borderLeft: '2px solid #d0d0d0',
-      }}>
-        {replies.map(reply => (
-          <div key={reply.id} style={{marginTop: '12px'}}>
-            <div style={{display: 'flex', gap: '12px'}}>
-              {getAvatar(reply.author)}
-              <div style={{flex: 1}}>
-                <div style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px'}}>
-                  <span style={{fontWeight: '700', fontSize: '13px', color: '#3f3f3f'}}>@{reply.author}</span>
-                  <span style={{fontSize: '12px', color: '#aaa'}}>{formatTimeAgo(reply.createdAt)}</span>
-                </div>
-                {editingId === reply.id ? (
-                  <div>
-                    <input value={editInput} onChange={e => setEditInput(e.target.value)}
-                      style={{width: '100%', padding: '6px 0', border: 'none', borderBottom: '2px solid #5c6bc0', outline: 'none', fontSize: '14px', boxSizing: 'border-box'}}
-                    />
-                    <div style={{display: 'flex', gap: '8px', marginTop: '8px'}}>
-                      <button onClick={() => setEditingId(null)}
-                        style={{backgroundColor: 'transparent', color: '#888', border: 'none', cursor: 'pointer', fontWeight: '600', fontSize: '13px', padding: '6px 12px', borderRadius: '20px'}}>취소</button>
-                      <button onClick={() => handleCommentEdit(reply.id)}
-                        style={{backgroundColor: '#5c6bc0', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: '600', fontSize: '13px', padding: '6px 16px', borderRadius: '20px'}}>저장</button>
-                    </div>
-                  </div>
-                ) : (
-                  <p style={{fontSize: '14px', color: '#444', margin: '0 0 8px'}}>{reply.content}</p>
-                )}
-                <div style={{display: 'flex', alignItems: 'center', gap: '4px'}}>
-                  <button onClick={() => handleLike(reply.id)}
-                    style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '14px', color: '#666', display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 8px', borderRadius: '20px'}}>
-                    👍 {reply.likeCount > 0 && <span style={{fontSize: '12px'}}>{reply.likeCount}</span>}
-                  </button>
-                  <button style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '14px', color: '#666', padding: '6px 8px', borderRadius: '20px'}}>👎</button>
-                  {user && (
-                    <button onClick={() => {
-                      setActiveReplyId(reply.id);
-                      setReplyInputText(`@${reply.author} `);
-                      setReplyTargetId(reply.id);
-                    }}
-                      style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: '700', color: '#3f3f3f', padding: '6px 12px', borderRadius: '20px'}}>
-                      답글
-                    </button>
-                  )}
-                  {user && (user.id === reply.userId || user.email === ADMIN_EMAIL) && (
-                    <>
-                      <button onClick={() => { setEditingId(reply.id); setEditInput(reply.content); }}
-                        style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '13px', color: '#888', padding: '6px 8px', borderRadius: '20px'}}>수정</button>
-                      <button onClick={() => handleCommentDelete(reply.id)}
-                        style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '13px', color: '#e57373', padding: '6px 8px', borderRadius: '20px'}}>삭제</button>
-                    </>
-                  )}
-                </div>
-                {activeReplyId === reply.id && <ReplyInput rootCommentId={rootCommentId} />}
-                {renderReplies(reply.id, rootCommentId)}
-              </div>
+  const getAllRepliesCount = (commentId) => getAllDescendants(commentId).length;
+
+  // 액션 버튼 (좋아요, 답글, 수정, 삭제)
+  const ActionButtons = ({ item, rootCommentId, isRoot = false }) => (
+    <div style={{display: 'flex', alignItems: 'center', gap: '4px'}}>
+      <button onClick={() => handleLike(item.id)}
+        style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '14px', color: '#666', display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 8px', borderRadius: '20px'}}>
+        👍 {item.likeCount > 0 && <span style={{fontSize: '12px'}}>{item.likeCount}</span>}
+      </button>
+      <button style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '14px', color: '#666', padding: '6px 8px', borderRadius: '20px'}}>👎</button>
+      {user && (
+        <button onClick={() => {
+          setActiveReplyId(item.id);
+          setReplyInputText(isRoot ? '' : `@${item.author} `);
+          setReplyTargetId(item.id);
+        }}
+          style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: '700', color: '#3f3f3f', padding: '6px 12px', borderRadius: '20px'}}>
+          답글
+        </button>
+      )}
+      {user && (user.id === item.userId || user.email === ADMIN_EMAIL) && (
+        <>
+          <button onClick={() => { setEditingId(item.id); setEditInput(item.content); }}
+            style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '13px', color: '#888', padding: '6px 8px', borderRadius: '20px'}}>수정</button>
+          <button onClick={() => handleCommentDelete(item.id)}
+            style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '13px', color: '#e57373', padding: '6px 8px', borderRadius: '20px'}}>삭제</button>
+        </>
+      )}
+    </div>
+  );
+
+  // 재귀 렌더링 - 각 노드마다 아바타 아래 세로선
+  const renderNode = (item, rootCommentId, isRoot = false) => {
+  const children = getDirectReplies(item.id);
+  const hasChildren = children.length > 0;
+  const showChildren = isRoot ? showReplies[item.id] : true;
+
+  return (
+    <div style={{display: 'flex', gap: '12px'}}>
+      {/* 왼쪽: 아바타 + 세로선 */}
+      <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, width: '36px'}}>
+        {getAvatar(item.author)}
+        {hasChildren && showChildren && (
+          <div style={{width: '2px', flex: 1, backgroundColor: '#d0d0d0', marginTop: '4px'}} />
+        )}
+      </div>
+
+      {/* 오른쪽: 내용 + 자식들 */}
+      <div style={{flex: 1, minWidth: 0}}>
+        <div style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px'}}>
+          <span style={{fontWeight: '700', fontSize: '13px', color: '#3f3f3f'}}>@{item.author}</span>
+          <span style={{fontSize: '12px', color: '#aaa'}}>{formatTimeAgo(item.createdAt)}</span>
+        </div>
+        {editingId === item.id ? (
+          <div>
+            <input value={editInput} onChange={e => setEditInput(e.target.value)}
+              style={{width: '100%', padding: '6px 0', border: 'none', borderBottom: '2px solid #5c6bc0', outline: 'none', fontSize: '14px', boxSizing: 'border-box'}}
+            />
+            <div style={{display: 'flex', gap: '8px', marginTop: '8px'}}>
+              <button onClick={() => setEditingId(null)}
+                style={{backgroundColor: 'transparent', color: '#888', border: 'none', cursor: 'pointer', fontWeight: '600', fontSize: '13px', padding: '6px 12px', borderRadius: '20px'}}>취소</button>
+              <button onClick={() => handleCommentEdit(item.id)}
+                style={{backgroundColor: '#5c6bc0', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: '600', fontSize: '13px', padding: '6px 16px', borderRadius: '20px'}}>저장</button>
             </div>
           </div>
-        ))}
+        ) : (
+          <p style={{fontSize: '14px', color: '#444', margin: '0 0 8px'}}>{item.content}</p>
+        )}
+
+        <ActionButtons item={item} rootCommentId={rootCommentId} isRoot={isRoot} />
+        {activeReplyId === item.id && <ReplyInput rootCommentId={rootCommentId} />}
+
+        {/* 자식들 - 꺾음선 포함 */}
+        {hasChildren && showChildren && (
+          <div>
+            {children.map(child => (
+              <div key={child.id} style={{position: 'relative', marginTop: '12px', paddingLeft: '48px'}}>
+                <div style={{
+                  position: 'absolute',
+                  left: '-30px',   // 부모 아바타 중심(18px) - content 시작(48px) = -30px
+                  top: '-4px',
+                  width: '78px',   // -30px에서 48px(자식 아바타 시작)까지
+                  height: '28px',
+                  borderLeft: '2px solid #d0d0d0',
+                  borderBottom: '2px solid #d0d0d0',
+                  borderBottomLeftRadius: '10px',
+                }} />
+                {renderNode(child, rootCommentId, false)}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {isRoot && hasChildren && (
+          <button onClick={() => setShowReplies({ ...showReplies, [item.id]: !showReplies[item.id] })}
+            style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', color: '#5c6bc0', fontWeight: '700', fontSize: '14px', padding: '8px 0', display: 'flex', alignItems: 'center', gap: '4px'}}>
+            {showReplies[item.id] ? `▲ 답글 숨기기` : `▼ 답글 ${getAllRepliesCount(item.id)}개`}
+          </button>
+        )}
       </div>
-    );
-  };
+    </div>
+  );
+};
 
   if (!post) return (
     <div style={{ textAlign: 'center', marginTop: '100px', color: '#aaa' }}>로딩중...</div>
@@ -318,66 +353,7 @@ function PostDetail() {
 
         {parentComments.map(comment => (
           <div key={comment.id} style={{marginBottom: '24px'}}>
-            <div style={{display: 'flex', gap: '12px'}}>
-              {getAvatar(comment.author)}
-              <div style={{flex: 1}}>
-                <div style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px'}}>
-                  <span style={{fontWeight: '700', fontSize: '13px', color: '#3f3f3f'}}>@{comment.author}</span>
-                  <span style={{fontSize: '12px', color: '#aaa'}}>{formatTimeAgo(comment.createdAt)}</span>
-                </div>
-                {editingId === comment.id ? (
-                  <div>
-                    <input value={editInput} onChange={e => setEditInput(e.target.value)}
-                      style={{width: '100%', padding: '6px 0', border: 'none', borderBottom: '2px solid #5c6bc0', outline: 'none', fontSize: '14px', boxSizing: 'border-box'}}
-                    />
-                    <div style={{display: 'flex', gap: '8px', marginTop: '8px'}}>
-                      <button onClick={() => setEditingId(null)}
-                        style={{backgroundColor: 'transparent', color: '#888', border: 'none', cursor: 'pointer', fontWeight: '600', fontSize: '13px', padding: '6px 12px', borderRadius: '20px'}}>취소</button>
-                      <button onClick={() => handleCommentEdit(comment.id)}
-                        style={{backgroundColor: '#5c6bc0', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: '600', fontSize: '13px', padding: '6px 16px', borderRadius: '20px'}}>저장</button>
-                    </div>
-                  </div>
-                ) : (
-                  <p style={{fontSize: '14px', color: '#444', margin: '0 0 8px'}}>{comment.content}</p>
-                )}
-                <div style={{display: 'flex', alignItems: 'center', gap: '4px'}}>
-                  <button onClick={() => handleLike(comment.id)}
-                    style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '14px', color: '#666', display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 8px', borderRadius: '20px'}}>
-                    👍 {comment.likeCount > 0 && <span style={{fontSize: '12px'}}>{comment.likeCount}</span>}
-                  </button>
-                  <button style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '14px', color: '#666', padding: '6px 8px', borderRadius: '20px'}}>👎</button>
-                  {user && (
-                    <button onClick={() => {
-                      setActiveReplyId(comment.id);
-                      setReplyInputText('');
-                      setReplyTargetId(comment.id);
-                    }}
-                      style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: '700', color: '#3f3f3f', padding: '6px 12px', borderRadius: '20px'}}>
-                      답글
-                    </button>
-                  )}
-                  {user && (user.id === comment.userId || user.email === ADMIN_EMAIL) && (
-                    <>
-                      <button onClick={() => { setEditingId(comment.id); setEditInput(comment.content); }}
-                        style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '13px', color: '#888', padding: '6px 8px', borderRadius: '20px'}}>수정</button>
-                      <button onClick={() => handleCommentDelete(comment.id)}
-                        style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '13px', color: '#e57373', padding: '6px 8px', borderRadius: '20px'}}>삭제</button>
-                    </>
-                  )}
-                </div>
-
-                {activeReplyId === comment.id && <ReplyInput rootCommentId={comment.id} />}
-
-                {showReplies[comment.id] && renderReplies(comment.id, comment.id)}
-
-                {getReplies(comment.id).length > 0 && (
-                  <button onClick={() => setShowReplies({ ...showReplies, [comment.id]: !showReplies[comment.id] })}
-                    style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', color: '#5c6bc0', fontWeight: '700', fontSize: '14px', padding: '8px 0', display: 'flex', alignItems: 'center', gap: '4px'}}>
-                    {showReplies[comment.id] ? `▲ 답글 숨기기` : `▼ 답글 ${getAllRepliesCount(comment.id)}개`}
-                  </button>
-                )}
-              </div>
-            </div>
+            {renderNode(comment, comment.id, true)}
           </div>
         ))}
       </div>
