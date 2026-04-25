@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../supabase';
 
@@ -7,12 +7,28 @@ function Login() {
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [rememberEmail, setRememberEmail] = useState(false);
+  const passwordRef = useRef(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('savedEmail');
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRememberEmail(true);
+      setTimeout(() => passwordRef.current?.focus(), 100);
+    }
+  }, []);
 
   const handleEmailLogin = async () => {
     if (!email || !password) {
       alert('이메일과 비밀번호를 입력해주세요.');
       return;
+    }
+    if (rememberEmail) {
+      localStorage.setItem('savedEmail', email);
+    } else {
+      localStorage.removeItem('savedEmail');
     }
     setLoading(true);
     if (isSignUp) {
@@ -49,7 +65,6 @@ function Login() {
           소셜 또는 이메일로 로그인하세요
         </p>
 
-        {/* 이메일 입력 */}
         <div style={{marginBottom: '12px', textAlign: 'left'}}>
           <input
             type="email"
@@ -59,8 +74,9 @@ function Login() {
             style={{width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1.5px solid #e0e0e0', fontSize: '15px', boxSizing: 'border-box'}}
           />
         </div>
-        <div style={{marginBottom: '20px', textAlign: 'left'}}>
+        <div style={{marginBottom: '12px', textAlign: 'left'}}>
           <input
+            ref={passwordRef}
             type="password"
             placeholder="비밀번호"
             value={password}
@@ -70,7 +86,22 @@ function Login() {
           />
         </div>
 
-        {/* 이메일 로그인 버튼 */}
+        {/* 아이디 기억하기 */}
+        {!isSignUp && (
+          <div style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px', textAlign: 'left'}}>
+            <input
+              type="checkbox"
+              id="rememberEmail"
+              checked={rememberEmail}
+              onChange={e => setRememberEmail(e.target.checked)}
+              style={{width: '16px', height: '16px', cursor: 'pointer'}}
+            />
+            <label htmlFor="rememberEmail" style={{fontSize: '14px', color: '#666', cursor: 'pointer'}}>
+              아이디 기억하기
+            </label>
+          </div>
+        )}
+
         <button
           onClick={handleEmailLogin}
           disabled={loading}
@@ -85,14 +116,12 @@ function Login() {
           {loading ? '처리중...' : isSignUp ? '회원가입' : '이메일 로그인'}
         </button>
 
-        {/* 구분선 */}
         <div style={{display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px'}}>
           <div style={{flex: 1, height: '1px', backgroundColor: '#eee'}}></div>
           <span style={{fontSize: '13px', color: '#bbb'}}>또는</span>
           <div style={{flex: 1, height: '1px', backgroundColor: '#eee'}}></div>
         </div>
 
-        {/* 카카오 로그인 버튼 */}
         <button
           onClick={handleKakaoLogin}
           style={{
@@ -110,7 +139,6 @@ function Login() {
           카카오로 로그인
         </button>
 
-        {/* 회원가입/로그인 전환 */}
         <p style={{fontSize: '14px', color: '#999'}}>
           {isSignUp ? '이미 계정이 있으신가요?' : '계정이 없으신가요?'}
           <span
