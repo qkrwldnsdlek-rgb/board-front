@@ -59,11 +59,13 @@ function PostDetail() {
         const { data } = await supabase.from('profiles').select('nickname, avatar_url').eq('id', u.id).single();
         setProfile(data);
       }
-
-      const onResize = () => setIsMobile(window.innerWidth <= 768);
-      window.addEventListener('resize', onResize);
-      return () => window.removeEventListener('resize', onResize);
     });
+  }, []);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, []);
 
   useEffect(() => {
@@ -232,7 +234,9 @@ function PostDetail() {
                     </div>
           </div>
         ) : (
-          <p style={{ fontSize: '14px', color: '#444', margin: '0 0 8px' }}>{item.content}</p>
+          <p style={{ fontSize: '14px', color: '#444', margin: '0 0 8px', wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+            {item.content}
+          </p>
         )}
 
         <ActionButtons item={item} rootCommentId={rootCommentId} isRoot={isRoot} />
