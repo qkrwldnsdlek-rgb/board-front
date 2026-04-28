@@ -127,12 +127,20 @@ function PostDetail() {
   };
 
   const getAvatar = (author) => (
-    <div style={{
-      width: 36, height: 36, borderRadius: '50%', backgroundColor: '#5c6bc0',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: 15, color: '#fff', fontWeight: 700, flexShrink: 0
-    }}>
-      {author?.[0]?.toUpperCase() || '?'}
+    <div className="desktop-menu">
+    {profile?.avatar_url ? (
+        <img src={profile.avatar_url} alt="프로필"
+          style={{width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover'}}
+        />
+      ) : (
+      <div style={{
+        width: 36, height: 36, borderRadius: '50%', backgroundColor: '#5c6bc0',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 15, color: '#fff', fontWeight: 700, flexShrink: 0
+      }}>
+        {author?.[0]?.toUpperCase() || '?'}
+      </div>
+      )}
     </div>
   );
 

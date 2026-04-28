@@ -162,7 +162,7 @@ function MyPage() {
               backgroundColor: '#5c6bc0', display: 'flex', alignItems: 'center',
               justifyContent: 'center', fontSize: '40px', color: '#fff', fontWeight: '700'
             }}>
-              {user.email ? user.email[0].toUpperCase() : '?'}
+              {profile.nickname ? profile.nickname[0].toUpperCase() : '?'}
             </div>
           )}
           {hovered && (

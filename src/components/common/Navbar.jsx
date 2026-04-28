@@ -55,7 +55,7 @@ function Navbar({ onMenuClick }) {
           backgroundColor: '#5c6bc0', display: 'flex', alignItems: 'center',
           justifyContent: 'center', fontSize: '16px', color: '#fff', fontWeight: '700'
         }}>
-          {user?.email ? user.email[0].toUpperCase() : '?'}
+          {profile ? profile.nickname[0].toUpperCase() : '?'}
         </div>
       )}
     </div>
