@@ -21,6 +21,8 @@ function PostDetail() {
   const [editingId, setEditingId] = useState(null);
   const [editInput, setEditInput] = useState('');
 
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
+
   const category = new URLSearchParams(location.search).get('category') || '';
   const fromAdmin = new URLSearchParams(location.search).get('from') === 'admin';
   const categoryParam = category ? `?category=${encodeURIComponent(category)}` : '';
@@ -57,6 +59,10 @@ function PostDetail() {
         const { data } = await supabase.from('profiles').select('nickname, avatar_url').eq('id', u.id).single();
         setProfile(data);
       }
+
+      const onResize = () => setIsMobile(window.innerWidth <= 768);
+      window.addEventListener('resize', onResize);
+      return () => window.removeEventListener('resize', onResize);
     });
   }, []);
 
@@ -237,29 +243,25 @@ function PostDetail() {
           <div style={{ marginTop: '12px', paddingLeft: '0px' }}>
             {children.map((child, index) => (
               <div key={child.id} style={{ position: 'relative' }}>
-                {/* [핵심] 'ㄴ'자 커넥터 라인 */}
                 <div style={{
                   position: 'absolute',
-                  left: '-32px', // 부모 아바타 중앙 위치로 조정
-                  top: '-50px',  // 위쪽 대댓글과의 간격 연결
-                  width: '25px',
-                  height: '82px', // 아바타 중간까지 내려옴
+                  left: isMobile ? '-20px' : '-32px',
+                  top: '-50px',
+                  width: isMobile ? '15px' : '25px',
+                  height: '82px',
                   borderLeft: '1.5px solid #ebebeb',
                   borderBottom: '1.5px solid #ebebeb',
                   borderBottomLeftRadius: '22px',
                 }} />
-                
-                {/* [핵심] 마지막 자식이 아닐 때만 아래로 쭉 이어지는 세로선 */}
                 {index !== children.length - 1 && (
                   <div style={{
                     position: 'absolute',
-                    left: '-32px',
+                    left: isMobile ? '-20px' : '-32px',
                     top: '7px',
                     bottom: '-12px',
                     borderLeft: '1.5px solid #ebebeb',
                   }} />
                 )}
-                
                 <div style={{ paddingTop: '12px' }}>
                   {renderNode(child, rootCommentId, false)}
                 </div>
@@ -336,7 +338,7 @@ function PostDetail() {
       </div>
 
       {/* 댓글 섹션 */}
-      <div style={{backgroundColor: '#fff', borderRadius: '20px', boxShadow: '0 2px 16px rgba(0,0,0,0.08)', padding: '40px', marginTop: '16px'}}>
+      <div style={{backgroundColor: '#fff', borderRadius: '20px', boxShadow: '0 2px 16px rgba(0,0,0,0.08)', padding: isMobile ? '20px' : '40px', marginTop: '16px', overflow: 'hidden'}}>
         <h2 style={{fontSize: '18px', fontWeight: '700', color: '#3f3f3f', marginBottom: '24px'}}>
           댓글 {parentComments.length}개
         </h2>
