@@ -275,10 +275,29 @@ function PostDetail() {
           )}
 
           {activeReplyId === item.id && (
-            <div style={{ position: 'relative', marginTop: '12px' }}>
-              <div style={{ position: 'absolute', left: isMobile ? '-38px' : '-38px', top: '-52px', width: isMobile ? '30px' : '30px', height: '77px', borderLeft: '1.5px solid #ebebeb', borderBottom: '1.5px solid #ebebeb', borderBottomLeftRadius: '22px' }} />
+              <div style={{ position: 'relative', marginTop: '12px', paddingTop: '12px' }}>
+              {/* ✅ ㄴ자 가이드라인: 고정 높이를 버리고 bottom을 사용합니다. */}
+              <div style={{ 
+                position: 'absolute', 
+                left: isMobile ? '-38px' : '-38px', 
+                top: '-51px',       // 위쪽 부모 선과 넉넉하게 겹치도록 위로 쭉 올림
+                bottom: '57px',      // ✨ 핵심: 아바타 높이(36px)의 절반인 18px에 딱 맞춤
+                width: isMobile ? '30px' : '30px', 
+                // height: '77px',   // ❌ 이 줄은 과감히 삭제하세요!
+                borderLeft: '1.5px solid #ebebeb', 
+                borderBottom: '1.5px solid #ebebeb', 
+                borderBottomLeftRadius: '22px' 
+              }} />
+              
+              {/* 하단 연장선 부분 */}
               {hasChildren && showChildren && (
-                <div style={{ position: 'absolute', left: isMobile ? '-38px' : '-38px', top: '0px', bottom: '-10px', borderLeft: '1.5px solid #ebebeb' }} />
+                <div style={{ 
+                  position: 'absolute', 
+                  left: isMobile ? '-38px' : '-38px', 
+                  top: '0px', 
+                  bottom: '-12px', 
+                  borderLeft: '1.5px solid #ebebeb' 
+                }} />
               )}
               <ReplyInput replyInputText={replyInputText} setReplyInputText={setReplyInputText} onSubmit={() => handleReplySubmit(rootCommentId)} onCancel={() => { setActiveReplyId(null); setReplyInputText(''); setReplyTargetId(null); }} profile={profile} user={user} getAvatar={getAvatar} />
             </div>
@@ -288,7 +307,7 @@ function PostDetail() {
             <div style={{ marginTop: '12px' }}>
               {children.map((child, index) => (
                 <div key={child.id} style={{ position: 'relative' }}>
-                  <div style={{ position: 'absolute', left: isMobile ? '-38px' : '-38px', top: '-52px', width: isMobile ? '30px' : '30px', height: '82px', borderLeft: '1.5px solid #ebebeb', borderBottom: '1.5px solid #ebebeb', borderBottomLeftRadius: '22px' }} />
+                  <div style={{ position: 'absolute', left: isMobile ? '-38px' : '-38px', top: '-51px', width: isMobile ? '30px' : '30px', height: '82px', borderLeft: '1.5px solid #ebebeb', borderBottom: '1.5px solid #ebebeb', borderBottomLeftRadius: '22px' }} />
                   {index !== children.length - 1 && (
                     <div style={{ position: 'absolute', left: isMobile ? '-38px' : '-38px', top: '7px', bottom: '-10px', borderLeft: '1.5px solid #ebebeb' }} />
                   )}
