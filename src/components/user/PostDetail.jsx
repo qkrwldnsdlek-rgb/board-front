@@ -251,20 +251,27 @@ function PostDetail() {
 
     return (
       <div style={{ display: 'flex', gap: '12px', position: 'relative' }}>
+        {/* 아바타 영역 */}
         <div style={{ flexShrink: 0, width: '36px', zIndex: 1 }}>
           {getAvatar(item.author, profilesMap[item.userId])}
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>
+          {/* 유저 정보 */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
             <span style={{ fontWeight: '700', fontSize: '13px', color: '#3f3f3f' }}>@{item.author}</span>
             <span style={{ fontSize: '12px', color: '#aaa' }}>{formatTimeAgo(item.createdAt)}</span>
           </div>
 
+          {/* ✅ 수정 모드 체크 (이 부분이 살아있어야 수정 버튼이 작동합니다) */}
           {editingId === item.id ? (
             <div style={{ marginBottom: '8px' }}>
-              <input value={editInput} onChange={e => setEditInput(e.target.value)}
+              <input 
+                value={editInput} 
+                onChange={e => setEditInput(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleCommentEdit(item.id)}
                 style={{ width: '100%', padding: '6px 0', border: 'none', borderBottom: '2px solid #5c6bc0', outline: 'none', fontSize: '14px', boxSizing: 'border-box' }}
+                autoFocus
               />
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
                 <button onClick={() => setEditingId(null)}
@@ -274,30 +281,58 @@ function PostDetail() {
               </div>
             </div>
           ) : (
-            <p style={{ fontSize: '14px', color: '#444', margin: '0 0 8px', wordBreak: 'break-word', overflowWrap: 'break-word' }}>
-              {item.content}
-            </p>
+            <>
+              <p style={{ fontSize: '14px', color: '#444', margin: '0 0 8px', wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+                {item.content}
+              </p>
+              <ActionButtons item={item} rootCommentId={rootCommentId} isRoot={isRoot} />
+            </>
           )}
 
-          <ActionButtons item={item} rootCommentId={rootCommentId} isRoot={isRoot} />
-
-          {/* ✅ Fix 1: ReplyInput에 필요한 props 전달 */}
+          {/* ✅ 답글 입력창 및 선 연결 */}
           {activeReplyId === item.id && (
-            <ReplyInput
-              replyInputText={replyInputText}
-              setReplyInputText={setReplyInputText}
-              onSubmit={() => handleReplySubmit(rootCommentId)}
-              onCancel={() => { setActiveReplyId(null); setReplyInputText(''); setReplyTargetId(null); }}
-              profile={profile}
-              user={user}
-              getAvatar={getAvatar}
-            />
+            <div style={{ position: 'relative', marginTop: '12px' }}>
+              {/* 입력창으로 향하는 ㄴ자 선 */}
+              <div style={{
+                position: 'absolute',
+                left: isMobile ? '-20px' : '-32px',
+                top: '-50px', 
+                width: isMobile ? '15px' : '25px',
+                height: '67px',
+                borderLeft: '1.5px solid #ebebeb',
+                borderBottom: '1.5px solid #ebebeb',
+                borderBottomLeftRadius: '22px',
+              }} />
+              
+              {/* 아래에 기존 대댓글이 더 있다면 선을 아래로 연장 */}
+              {hasChildren && showChildren && (
+                <div style={{
+                  position: 'absolute',
+                  left: isMobile ? '-20px' : '-32px',
+                  top: '0px',
+                  bottom: '-12px',
+                  borderLeft: '1.5px solid #ebebeb',
+                }} />
+              )}
+
+              <ReplyInput
+                replyInputText={replyInputText}
+                setReplyInputText={setReplyInputText}
+                onSubmit={() => handleReplySubmit(rootCommentId)}
+                onCancel={() => { setActiveReplyId(null); setReplyInputText(''); setReplyTargetId(null); }}
+                profile={profile}
+                user={user}
+                getAvatar={getAvatar}
+              />
+            </div>
           )}
 
+          {/* 대댓글 리스트 */}
           {hasChildren && showChildren && (
             <div style={{ marginTop: '12px' }}>
               {children.map((child, index) => (
                 <div key={child.id} style={{ position: 'relative' }}>
+                  {/* ㄴ 가이드라인 */}
                   <div style={{
                     position: 'absolute',
                     left: isMobile ? '-20px' : '-32px',
@@ -308,6 +343,8 @@ function PostDetail() {
                     borderBottom: '1.5px solid #ebebeb',
                     borderBottomLeftRadius: '22px',
                   }} />
+                  
+                  {/* 다음 형제가 있으면 수직선 연장 */}
                   {index !== children.length - 1 && (
                     <div style={{
                       position: 'absolute',
@@ -317,6 +354,7 @@ function PostDetail() {
                       borderLeft: '1.5px solid #ebebeb',
                     }} />
                   )}
+                  
                   <div style={{ paddingTop: '12px' }}>
                     {renderNode(child, rootCommentId, false)}
                   </div>
