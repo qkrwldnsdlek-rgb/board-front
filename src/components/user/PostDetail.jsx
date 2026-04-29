@@ -101,6 +101,11 @@ function PostDetail() {
     const res = await api.get(`/comments/post/${id}`);
     const commentList = res.data;
     setComments(commentList);
+
+
+    //  console.log('전체:', commentList.length, '댓글만:', commentList.filter(c => !c.parentId).length);
+
+
     const userIds = [...new Set(commentList.map(c => c.userId).filter(Boolean))];
     if (userIds.length > 0) {
       const { data: profiles } = await supabase.from('profiles').select('id, avatar_url').in('id', userIds);
@@ -188,6 +193,8 @@ function PostDetail() {
   );
 
   const parentComments = comments.filter(c => !c.parentId);
+  
+
   const getDirectReplies = (parentId) => comments.filter(c => c.parentId === parentId);
   const getAllDescendants = (commentId) => {
     const result = [];
@@ -199,6 +206,8 @@ function PostDetail() {
     return result;
   };
   const getAllRepliesCount = (commentId) => getAllDescendants(commentId).length;
+
+  const totalCount = parentComments.length + parentComments.reduce((acc, c) => acc + getAllRepliesCount(c.id), 0);
 
   const ActionButtons = ({ item, rootCommentId, isRoot = false, depth = 0 }) => (
     <div style={{ display: 'flex', alignItems: 'center', gap: '2px', flexWrap: 'wrap', marginLeft: '-8px' }}>
@@ -394,8 +403,8 @@ function PostDetail() {
 
       {/* 댓글 섹션 */}
       <div style={{ backgroundColor: '#fff', borderRadius: '20px', boxShadow: '0 2px 16px rgba(0,0,0,0.08)', padding: isMobile ? '16px' : '40px', marginTop: '16px', overflow: 'hidden' }}>
-        <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#3f3f3f', marginBottom: '24px' }}>댓글 {parentComments.length}개</h2>
-
+        {/* <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#3f3f3f', marginBottom: '24px' }}>댓글 {parentComments.length}개</h2> */}
+        <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#3f3f3f', marginBottom: '24px' }}>댓글 {totalCount}개</h2>
         {user ? (
           <div style={{ display: 'flex', gap: `${AVATAR_GAP}px`, marginBottom: '32px', alignItems: 'flex-start' }}>
             {getAvatar(profile?.nickname || user.email, profile?.avatar_url)}
