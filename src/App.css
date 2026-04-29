@@ -182,3 +182,47 @@
     border-right-color: var(--border);
   }
 }
+
+
+
+
+
+
+/* 1. 신규 댓글/답글 반짝임 효과 */
+@keyframes flash-highlight {
+  0% {
+    background-color: rgba(92, 107, 192, 0.3); /* 연한 보라색 하이라이트 */
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.new-comment-flash {
+  animation: flash-highlight 2s ease-out forwards;
+}
+
+/* 2. 댓글 레이아웃 및 호버 효과 (선택 사항) */
+.comment-node-container {
+  transition: background-color 0.3s ease;
+}
+
+.comment-node-container:hover {
+  background-color: #fcfcfc; /* 마우스 올렸을 때 아주 살짝 변하는 효과 */
+}
+
+/* 3. 답글 입력창 애니메이션 (살짝 나타나게) */
+.reply-input-wrapper {
+  animation: slide-down 0.3s ease-out;
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
