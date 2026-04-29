@@ -221,7 +221,7 @@ function PostDetail() {
     </div>
   );
 
-  const renderNode = (item, rootCommentId, isRoot = false) => {
+  const renderNode = (item, rootCommentId, isRoot = false, depth = 0) => {
     const children = getDirectReplies(item.id);
     const hasChildren = children.length > 0;
     const showChildren = isRoot ? showReplies[item.id] : true;
@@ -262,7 +262,7 @@ function PostDetail() {
           ) : (
             <>
               <p style={{ fontSize: '14px', color: '#444', margin: '0 0 8px', wordBreak: 'break-word', overflowWrap: 'break-word' }}>{item.content}</p>
-              <ActionButtons item={item} rootCommentId={rootCommentId} isRoot={isRoot} />
+              <ActionButtons item={item} rootCommentId={rootCommentId} isRoot={isRoot} depth={depth} />
             </>
           )}
 
@@ -294,29 +294,39 @@ function PostDetail() {
             </div>
           )}
 
-          {/* 자식 댓글 */}
-          {hasChildren && showChildren && (
-            <div style={{ marginTop: '12px' }}>
-              {children.map((child, index) => (
-                <div key={child.id} style={{ position: 'relative' }}>
-                  <div style={{
-                    position: 'absolute',
-                    left: LINE_LEFT,
-                    top: '-51px',
-                    width: LINE_WIDTH,
-                    height: '82px',
-                    borderLeft: '1.5px solid #ebebeb',
-                    borderBottom: '1.5px solid #ebebeb',
-                    borderBottomLeftRadius: '22px'
-                  }} />
-                  {index !== children.length - 1 && (
-                    <div style={{ position: 'absolute', left: LINE_LEFT, top: '0px', bottom: '-12px', borderLeft: '1.5px solid #ebebeb' }} />
-                  )}
-                  <div style={{ paddingTop: '12px' }}>{renderNode(child, rootCommentId, false)}</div>
-                </div>
-              ))}
-            </div>
-          )}
+
+
+          {/* 자식 댓글 - depth 2 이상은 depth 1에서 flat하게 처리 */}
+{hasChildren && showChildren && depth < 2 && (
+  <div style={{ marginTop: '12px' }}>
+    {(depth === 1
+      ? getAllDescendants(item.id).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+      : children
+    ).map((child, index, arr) => (
+      <div key={child.id} style={{ position: 'relative' }}>
+        <div style={{
+          position: 'absolute',
+          left: LINE_LEFT,
+          top: '-51px',
+          width: LINE_WIDTH,
+          height: '82px',
+          borderLeft: '1.5px solid #ebebeb',
+          borderBottom: '1.5px solid #ebebeb',
+          borderBottomLeftRadius: '22px'
+        }} />
+        {index !== arr.length - 1 && (
+          <div style={{ position: 'absolute', left: LINE_LEFT, top: '0px', bottom: '-12px', borderLeft: '1.5px solid #ebebeb' }} />
+        )}
+        <div style={{ paddingTop: '12px' }}>
+          {renderNode(child, rootCommentId, false, depth === 1 ? 2 : depth + 1)}
+        </div>
+      </div>
+    ))}
+  </div>
+)}
+
+
+
 
           {isRoot && hasChildren && (
             <button onClick={() => setShowReplies(prev => ({ ...prev, [item.id]: !prev[item.id] }))}
