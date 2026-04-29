@@ -200,8 +200,8 @@ function PostDetail() {
   };
   const getAllRepliesCount = (commentId) => getAllDescendants(commentId).length;
 
-  const ActionButtons = ({ item, rootCommentId, isRoot = false }) => (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '2px', flexWrap: 'wrap' }}>
+  const ActionButtons = ({ item, rootCommentId, isRoot = false, depth = 0 }) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '2px', flexWrap: 'wrap', marginLeft: '-8px' }}>
       <button onClick={() => handleLike(item.id)} style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '14px', color: '#666', display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 8px', borderRadius: '20px' }}>
         👍 {item.likeCount > 0 && <span style={{ fontSize: '12px' }}>{item.likeCount}</span>}
       </button>
