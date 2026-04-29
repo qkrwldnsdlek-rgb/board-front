@@ -64,7 +64,7 @@ function PostDetail() {
 
   const formatTimeAgo = (dateStr) => {
     const now = new Date();
-    const date = new Date(dateStr);
+    const date = new Date(dateStr.endsWith('Z') ? dateStr : dateStr + 'Z');
     const diff = Math.floor((now - date) / 1000);
     if (diff < 60) return '방금 전';
     if (diff < 3600) return `${Math.floor(diff / 60)}분 전`;
@@ -241,7 +241,8 @@ function PostDetail() {
             <span style={{ fontWeight: '700', fontSize: isMobile ? '12px' : '13px', color: '#3f3f3f' }}>@{item.author}</span>
             <span style={{ fontSize: isMobile ? '11px' : '12px', color: '#aaa' }}>
               {formatTimeAgo(item.createdAt)}
-              {item.updatedAt && item.updatedAt !== item.createdAt && (
+              {item.updatedAt && 
+              Math.floor(new Date(item.updatedAt).getTime() / 1000) !== Math.floor(new Date(item.createdAt).getTime() / 1000) && (
                 <span style={{ marginLeft: '6px', fontSize: '11px', color: '#bbb' }}>(수정됨)</span>
               )}
             </span>
