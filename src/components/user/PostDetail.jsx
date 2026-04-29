@@ -296,34 +296,34 @@ function PostDetail() {
 
 
 
-          {/* 자식 댓글 - depth 2 이상은 depth 1에서 flat하게 처리 */}
-{hasChildren && showChildren && depth < 2 && (
-  <div style={{ marginTop: '12px' }}>
-    {(depth === 1
-      ? getAllDescendants(item.id).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
-      : children
-    ).map((child, index, arr) => (
-      <div key={child.id} style={{ position: 'relative' }}>
-        <div style={{
-          position: 'absolute',
-          left: LINE_LEFT,
-          top: '-51px',
-          width: LINE_WIDTH,
-          height: '82px',
-          borderLeft: '1.5px solid #ebebeb',
-          borderBottom: '1.5px solid #ebebeb',
-          borderBottomLeftRadius: '22px'
-        }} />
-        {index !== arr.length - 1 && (
-          <div style={{ position: 'absolute', left: LINE_LEFT, top: '0px', bottom: '-12px', borderLeft: '1.5px solid #ebebeb' }} />
-        )}
-        <div style={{ paddingTop: '12px' }}>
-          {renderNode(child, rootCommentId, false, depth === 1 ? 2 : depth + 1)}
-        </div>
-      </div>
-    ))}
-  </div>
-)}
+          {/* 자식 댓글 */}
+          {hasChildren && showChildren && depth < 3 && (
+            <div style={{ marginTop: '12px' }}>
+              {(depth === 2
+                ? getAllDescendants(item.id).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+                : children
+              ).map((child, index, arr) => (
+                <div key={child.id} style={{ position: 'relative' }}>
+                  <div style={{
+                    position: 'absolute',
+                    left: LINE_LEFT,
+                    top: '-51px',
+                    width: LINE_WIDTH,
+                    height: '82px',
+                    borderLeft: '1.5px solid #ebebeb',
+                    borderBottom: '1.5px solid #ebebeb',
+                    borderBottomLeftRadius: '22px'
+                  }} />
+                  {index !== arr.length - 1 && (
+                    <div style={{ position: 'absolute', left: LINE_LEFT, top: '0px', bottom: '-12px', borderLeft: '1.5px solid #ebebeb' }} />
+                  )}
+                  <div style={{ paddingTop: '12px' }}>
+                    {renderNode(child, rootCommentId, false, depth === 2 ? 3 : depth + 1)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
 
 
