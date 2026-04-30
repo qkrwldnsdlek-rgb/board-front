@@ -97,6 +97,7 @@ input:focus, textarea:focus {
   }
 }
 
+
 .ql-editor img {
   max-width: 100%;
   height: auto;
@@ -141,3 +142,11 @@ input:focus, textarea:focus {
   margin-bottom: 0.5em !important;
 }
 
+/* 코드블록 반응형 */
+.ql-editor pre,
+.ql-editor code {
+  white-space: pre-wrap !important;
+  word-break: break-all !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+}
