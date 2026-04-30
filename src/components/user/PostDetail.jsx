@@ -130,6 +130,34 @@ function PostDetail() {
     }
   };
 
+  // 댓글 로드 후 스크롤
+useEffect(() => {
+  if (location.hash && comments.length > 0) {
+    const commentId = location.hash.replace('#comment-', '');
+    
+    // 해당 댓글의 루트 댓글 찾아서 답글 펼치기
+    const comment = comments.find(c => String(c.id) === commentId);
+    if (comment) {
+      // 부모를 타고 올라가서 루트 찾기
+      let rootId = comment.id;
+      let current = comment;
+      while (current.parentId) {
+        current = comments.find(c => c.id === current.parentId);
+        if (current) rootId = current.id;
+      }
+      // 루트 댓글 답글 펼치기
+      setShowReplies(prev => ({ ...prev, [rootId]: true }));
+    }
+
+    // 펼친 후 스크롤
+    setTimeout(() => {
+      const el = document.querySelector(location.hash);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 300);
+  }
+}, [comments]);
+
+
   const handleCommentSubmit = async () => {
     if (!commentInput.trim()) return;
     if (!user) { alert('로그인이 필요합니다.'); return; }
@@ -237,7 +265,7 @@ function PostDetail() {
     const isNew = String(item.id) === String(lastSubmittedId);
 
     return (
-      <div style={{ display: 'flex', gap: `${AVATAR_GAP}px`, position: 'relative' }}>
+      <div id={`comment-${item.id}`} style={{ display: 'flex', gap: `${AVATAR_GAP}px`, position: 'relative' }}>
         <div style={{ flexShrink: 0, width: `${avatarSize}px`, zIndex: 1 }}>
           {getAvatar(item.author, profilesMap[item.userId])}
         </div>
