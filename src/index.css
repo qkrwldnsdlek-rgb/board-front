@@ -96,3 +96,48 @@ input:focus, textarea:focus {
     text-align: left;
   }
 }
+
+.ql-editor img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 15px;
+  display: block;
+  margin: 16px auto;     /* ✅ 위아래 여백 */
+  overflow: hidden;
+}
+
+/* Quill 렌더링 스타일 */
+.ql-editor ul,
+.ql-editor ol {
+  padding-left: 1.5em;
+}
+
+.ql-editor ul li {
+  list-style-type: disc;
+}
+
+.ql-editor ol li {
+  list-style-type: decimal;
+}
+
+.ql-editor li {
+  display: list-item;
+}
+
+/* Quill 문단 간격 */
+.ql-editor p {
+  margin-bottom: 1em !important;
+}
+
+/* 빈 p 태그에도 높이 부여 */
+.ql-editor p:empty {
+  min-height: 1em;
+}
+
+.ql-editor h1,
+.ql-editor h2,
+.ql-editor h3 {
+  margin-top: 1.5em !important;
+  margin-bottom: 0.5em !important;
+}
+

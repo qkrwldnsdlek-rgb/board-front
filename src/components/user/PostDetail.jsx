@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import api from '../../api';
 import { supabase } from '../../supabase';
+import 'react-quill-new/dist/quill.snow.css';
 
 const ReplyInput = ({ replyInputText, setReplyInputText, onSubmit, onCancel, profile, user, getAvatar }) => (
   <div style={{ display: 'flex', gap: '8px', marginTop: '12px', alignItems: 'flex-start' }}>
@@ -124,10 +125,39 @@ function PostDetail() {
     loadComments();
   }, [id, loadComments]);
 
-  const handleDelete = () => {
-    if (window.confirm('삭제하시겠습니까?')) {
-      api.delete(`/posts/${id}`).then(() => goBack());
+  const handleDelete = async () => {
+    if (!window.confirm('삭제하시겠습니까?')) return;
+
+    // 1. 본문 내 이미지 URL 추출
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(post.content, 'text/html');
+    const contentImages = [...doc.querySelectorAll('img')]
+      .map(img => img.src)
+      .filter(src => src.includes('board-images'));
+
+    // 2. 썸네일 이미지도 포함
+    const allImageUrls = [...contentImages];
+    if (post.imageUrl) allImageUrls.push(post.imageUrl);
+
+    // 3. Supabase Storage에서 삭제
+    if (allImageUrls.length > 0) {
+      const filePaths = allImageUrls.map(url => {
+        // URL에서 파일 경로만 추출
+        const path = url.split('/storage/v1/object/public/board-images/')[1];
+        return path;
+      }).filter(Boolean);
+
+      if (filePaths.length > 0) {
+        const { error } = await supabase.storage
+          .from('board-images')
+          .remove(filePaths);
+        if (error) console.error('이미지 삭제 실패:', error);
+      }
     }
+
+    // 4. 게시글 삭제
+    await api.delete(`/posts/${id}`);
+    goBack();
   };
 
   // 댓글 로드 후 스크롤
@@ -388,7 +418,11 @@ useEffect(() => {
           <span>👀 {post.viewCount}</span>
         </div>
         <hr style={{ border: 'none', borderTop: '1px solid #f0f0f0', marginBottom: '32px' }} />
-        <p style={{ fontSize: '16px', lineHeight: '1.9', color: '#444', whiteSpace: 'pre-wrap', minHeight: '200px', wordBreak: 'break-word' }}>{post.content}</p>
+        <div
+          className="ql-editor"
+          dangerouslySetInnerHTML={{ __html: post.content }}
+          style={{ padding: 0, fontSize: '16px', lineHeight: '1.9', minHeight: '200px', wordBreak: 'break-word' }}
+        />
 
         {post.imageUrl && (
           <>
