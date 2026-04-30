@@ -88,9 +88,7 @@ function Navbar({ onMenuClick }) {
       }, payload => {
         setNotifications(prev => [payload.new, ...prev]);
       })
-      .subscribe((status) => {
-        console.log('구독 상태:', status);
-      });
+      .subscribe();
     return channel;
   };
 
@@ -237,8 +235,8 @@ function Navbar({ onMenuClick }) {
                         notifications.map(n => (
                           <div key={n.id}
                             onClick={async () => {
-                              await supabase.from('notifications').delete().eq('id', n.id);
-                              setNotifications(prev => prev.filter(notif => notif.id !== n.id));
+                              const { error } = await supabase.from('notifications').delete().eq('id', n.id);
+                              if (!error) setNotifications(prev => prev.filter(notif => notif.id !== n.id));
                               navigate(`/posts/${n.post_id}#comment-${n.comment_id}`);
                               setShowNotif(false);
                             }}
