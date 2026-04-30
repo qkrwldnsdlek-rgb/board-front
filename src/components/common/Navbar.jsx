@@ -54,6 +54,14 @@ function Navbar({ onMenuClick }) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
   const loadProfile = async (userId) => {
     const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
     if (data) setProfile(data);
@@ -186,42 +194,69 @@ function Navbar({ onMenuClick }) {
 
                 {/* 알림 드롭다운 */}
                 {showNotif && (
-                  <div style={{
-                    position: 'absolute', right: 0, top: '44px',
-                    width: '320px', backgroundColor: '#fff',
-                    borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-                    zIndex: 9999, maxHeight: '400px', overflowY: 'auto'
-                  }}>
-                    <div style={{padding: '16px', borderBottom: '1px solid #f0f0f0', fontWeight: '700', fontSize: '15px'}}>
-                      알림
-                    </div>
-                    {notifications.length === 0 ? (
-                      <div style={{padding: '24px', textAlign: 'center', color: '#aaa', fontSize: '14px'}}>
-                        읽지않은 알림이 없습니다.
-                      </div>
-                    ) : (
-                      notifications.map(n => (
-                        <div key={n.id}
-                          onClick={async () => {
-                            await supabase.from('notifications').delete().eq('id', n.id);
-                            setNotifications(prev => prev.filter(notif => notif.id !== n.id));
-                            navigate(`/posts/${n.post_id}#comment-${n.comment_id}`);
-                            setShowNotif(false);
-                          }}
-                          style={{
-                            padding: '14px 16px', cursor: 'pointer',
-                            backgroundColor: n.is_read ? '#fff' : '#f8f9ff',
-                            borderBottom: '1px solid #f0f0f0',
-                          }}>
-                          <div style={{fontSize: '13px', color: '#444', fontWeight: n.is_read ? '400' : '600'}}>
-                            {n.message}
-                          </div>
-                          <div style={{fontSize: '11px', color: '#aaa', marginTop: '4px'}}>
-                            {n.post_title} · {formatTimeAgo(n.created_at)}
-                          </div>
-                        </div>
-                      ))
+                    <div style={{
+                      position: isMobile ? 'fixed' : 'absolute',
+                      right: isMobile ? '8px' : '-20px',
+                      top: isMobile ? '60px' : '44px',
+                      width: isMobile ? 'calc(100vw - 16px)' : '320px',
+                      maxWidth: '320px',
+                      zIndex: 9999,
+                    }}>
+                    {/* 꼭지점 삼각형 - 모바일에서는 숨김 */}
+                    {!isMobile && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '-8px',
+                        right: '31px',
+                        width: 0,
+                        height: 0,
+                        borderLeft: '8px solid transparent',
+                        borderRight: '8px solid transparent',
+                        borderBottom: '8px solid #fff',
+                        filter: 'drop-shadow(0 -2px 2px rgba(0,0,0,0.08))',
+                        zIndex: 10000,
+                      }} />
                     )}
+
+                    {/* 실제 내용 - 여기만 scroll */}
+                    <div style={{
+                      backgroundColor: '#fff',
+                      borderRadius: '12px',
+                      boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+                      maxHeight: '400px',
+                      overflowY: 'auto',
+                    }}>
+                      <div style={{padding: '16px', borderBottom: '1px solid #f0f0f0', fontWeight: '700', fontSize: '15px'}}>
+                        알림
+                      </div>
+                      {notifications.length === 0 ? (
+                        <div style={{padding: '24px', textAlign: 'center', color: '#aaa', fontSize: '14px'}}>
+                          읽지않은 알림이 없습니다.
+                        </div>
+                      ) : (
+                        notifications.map(n => (
+                          <div key={n.id}
+                            onClick={async () => {
+                              await supabase.from('notifications').delete().eq('id', n.id);
+                              setNotifications(prev => prev.filter(notif => notif.id !== n.id));
+                              navigate(`/posts/${n.post_id}#comment-${n.comment_id}`);
+                              setShowNotif(false);
+                            }}
+                            style={{
+                              padding: '14px 16px', cursor: 'pointer',
+                              backgroundColor: n.is_read ? '#fff' : '#f8f9ff',
+                              borderBottom: '1px solid #f0f0f0',
+                            }}>
+                            <div style={{fontSize: '13px', color: '#444', fontWeight: n.is_read ? '400' : '600'}}>
+                              {n.message}
+                            </div>
+                            <div style={{fontSize: '11px', color: '#aaa', marginTop: '4px'}}>
+                              {n.post_title} · {formatTimeAgo(n.created_at)}
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
