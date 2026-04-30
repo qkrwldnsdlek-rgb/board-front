@@ -424,6 +424,18 @@ useEffect(() => {
           style={{ padding: 0, fontSize: '16px', lineHeight: '1.9', minHeight: '200px', wordBreak: 'break-word' }}
         />
 
+        
+        {/* 유튜브 */}
+        {post.youtubeUrl && getYoutubeEmbedUrl(post.youtubeUrl) && (
+          <div style={{ marginBottom: '32px' }}>
+            <iframe key={post.youtubeUrl} width="100%" height={isMobile ? '220' : '450'}
+              src={getYoutubeEmbedUrl(post.youtubeUrl)} frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen style={{ borderRadius: '12px' }} />
+          </div>
+        )}
+
+        {/* 대표 이미지 */}
         {post.imageUrl && (
           <>
             <hr style={{ border: 'none', borderTop: '1px solid #f0f0f0', margin: '32px 0' }} />
@@ -442,15 +454,6 @@ useEffect(() => {
               </div>
             )}
           </>
-        )}
-
-        {post.youtubeUrl && getYoutubeEmbedUrl(post.youtubeUrl) && (
-          <div style={{ marginBottom: '32px' }}>
-            <iframe key={post.youtubeUrl} width="100%" height={isMobile ? '220' : '450'}
-              src={getYoutubeEmbedUrl(post.youtubeUrl)} frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen style={{ borderRadius: '12px' }} />
-          </div>
         )}
 
         <hr style={{ border: 'none', borderTop: '1px solid #f0f0f0', margin: '32px 0' }} />
