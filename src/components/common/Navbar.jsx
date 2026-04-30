@@ -197,7 +197,7 @@ function Navbar({ onMenuClick }) {
                     </div>
                     {notifications.length === 0 ? (
                       <div style={{padding: '24px', textAlign: 'center', color: '#aaa', fontSize: '14px'}}>
-                        알림이 없습니다.
+                        읽지않은 알림이 없습니다.
                       </div>
                     ) : (
                       notifications.map(n => (
