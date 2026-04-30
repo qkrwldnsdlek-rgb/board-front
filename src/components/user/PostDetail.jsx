@@ -426,14 +426,18 @@ useEffect(() => {
 
         {post.imageUrl && (
           <>
+            <hr style={{ border: 'none', borderTop: '1px solid #f0f0f0', margin: '32px 0' }} />
             <div style={{ marginBottom: '32px' }}>
+              <p style={{ fontSize: '14px', fontWeight: '600', color: '#888', marginBottom: '12px' }}>
+                📎 대표 이미지
+              </p>
               <img src={post.imageUrl} alt="첨부 이미지" onClick={() => setShowModal(true)}
-                style={{ maxWidth: '100%', maxHeight: '500px', objectFit: 'contain', borderRadius: '12px', cursor: 'zoom-in', boxShadow: '0 2px 12px rgba(0,0,0,0.1)' }} />
+                style={{ maxWidth: '40%', maxHeight: '200px', objectFit: 'contain', cursor: 'zoom-in', boxShadow: '0 2px 12px rgba(0,0,0,0.1)', borderRadius: '12px' }} />
             </div>
             {showModal && (
               <div onClick={() => setShowModal(false)}
                 style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.85)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'zoom-out' }}>
-                <img src={post.imageUrl} alt="첨부 이미지" style={{ maxWidth: '90%', maxHeight: '90vh', objectFit: 'contain', borderRadius: '8px' }} />
+                <img src={post.imageUrl} alt="첨부 이미지" style={{ maxWidth: '90%', maxHeight: '90vh', objectFit: 'contain', borderRadius: '12px' }} />
                 <div style={{ position: 'absolute', top: '20px', right: '30px', color: '#fff', fontSize: '36px', cursor: 'pointer', fontWeight: '300' }}>✕</div>
               </div>
             )}
