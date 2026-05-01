@@ -346,8 +346,8 @@ useEffect(() => {
                 borderBottom: '1.5px solid #ebebeb',
                 borderBottomLeftRadius: '22px'
               }} />
-              {/* ✅ depth 2 미만일 때만 세로선 연장 */}
-              {depth < 2 && (isRoot || (hasChildren && showChildren)) && (
+              {/* ✅ depth 3 미만일 때만 세로선 연장 */}
+              {depth < 3 && (isRoot || (hasChildren && showChildren)) && (
                 <div style={{ position: 'absolute', left: LINE_LEFT, top: '0px', bottom: '-12px', borderLeft: '1.5px solid #ebebeb' }} />
               )}
               <ReplyInput
