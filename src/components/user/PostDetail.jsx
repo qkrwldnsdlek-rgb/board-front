@@ -382,7 +382,7 @@ useEffect(() => {
                   }} />
                   {/* ✅ root의 자식이면 마지막도 연장, 2depth 이상이면 마지막에서 끊김 */}
                   {(index !== arr.length - 1 || isRoot) && (
-                    <div style={{ position: 'absolute', left: LINE_LEFT, top: '0px', bottom: '-1px', borderLeft: '1.5px solid #ebebeb' }} />
+                    <div style={{ position: 'absolute', left: LINE_LEFT, top: '0px', bottom: '-12px', borderLeft: '1.5px solid #ebebeb' }} />
                   )}
                   <div style={{ paddingTop: '12px' }}>
                     {renderNode(child, rootCommentId, false, depth === 2 ? 3 : depth + 1)}
@@ -398,7 +398,9 @@ useEffect(() => {
               <div style={{
                 position: 'absolute',
                 left: LINE_LEFT,
-                top: `-${avatarSize + 10}px`,  // ✅ 아바타 바로 아래부터 시작
+                // ✅ 펼쳐진 상태: 마지막 자식에서 이어받음 (top: 0)
+                // ✅ 접힌 상태: 아바타 아래부터 시작
+                top: showChildren ? '0px' : `-${avatarSize + AVATAR_GAP}px`,
                 bottom: '15px',
                 width: LINE_WIDTH,
                 borderLeft: '1.5px solid #ebebeb',
