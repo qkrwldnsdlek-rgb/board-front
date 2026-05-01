@@ -127,7 +127,10 @@ function Login() {
             cursor: 'pointer', marginBottom: '12px'
           }}
         >
+{/* 회원가입 비활성화
           {loading ? '처리중...' : isSignUp ? '회원가입' : '이메일 로그인'}
+*/}
+          {loading ? '처리중...' : '이메일 로그인'}
         </button>
 
         <div style={{display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px'}}>
@@ -152,7 +155,7 @@ function Login() {
             alt="kakao" style={{width: '24px', height: '24px'}} />
           카카오로 로그인
         </button>
-
+{/* 회원가입 비활성화
         <p style={{fontSize: '14px', color: '#999'}}>
           {isSignUp ? '이미 계정이 있으신가요?' : '계정이 없으신가요?'}
           <span
@@ -162,6 +165,7 @@ function Login() {
             {isSignUp ? '로그인' : '회원가입'}
           </span>
         </p>
+*/}
       </div>
     </div>
   );
