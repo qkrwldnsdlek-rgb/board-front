@@ -339,15 +339,16 @@ useEffect(() => {
               <div style={{
                 position: 'absolute',
                 left: LINE_LEFT,
-                top: `${-(avatarSize + AVATAR_GAP)}px`,   // 부모 아바타 위쪽까지
-                bottom: `${avatarSize / 2 + 38}px`,              // 입력창 아바타 중앙까지
+                top: `${-(avatarSize + AVATAR_GAP)}px`,
+                bottom: `${avatarSize / 2 + 38}px`,
                 width: LINE_WIDTH,
                 borderLeft: '1.5px solid #ebebeb',
                 borderBottom: '1.5px solid #ebebeb',
                 borderBottomLeftRadius: '22px'
               }} />
-              {hasChildren && showChildren && (
-                <div style={{ position: 'absolute', left: LINE_LEFT, top: '0px', bottom: '-12px', borderLeft: '1.5px solid #ebebeb' }} />
+              {/* ✅ isRoot이면 답글 닫혀있어도 세로선 유지 */}
+              {hasChildren && (showChildren || isRoot) && (
+                <div style={{ position: 'absolute', left: LINE_LEFT, top: '0px', bottom: '-1px', borderLeft: '1.5px solid #ebebeb' }} />
               )}
               <ReplyInput
                 replyInputText={replyInputText}
@@ -360,8 +361,6 @@ useEffect(() => {
               />
             </div>
           )}
-
-
 
           {/* 자식 댓글 */}
           {hasChildren && showChildren && depth < 3 && (
@@ -381,8 +380,9 @@ useEffect(() => {
                     borderBottom: '1.5px solid #ebebeb',
                     borderBottomLeftRadius: '22px'
                   }} />
-                  {index !== arr.length - 1 && (
-                    <div style={{ position: 'absolute', left: LINE_LEFT, top: '0px', bottom: '-12px', borderLeft: '1.5px solid #ebebeb' }} />
+                  {/* ✅ root의 자식이면 마지막도 연장, 2depth 이상이면 마지막에서 끊김 */}
+                  {(index !== arr.length - 1 || isRoot) && (
+                    <div style={{ position: 'absolute', left: LINE_LEFT, top: '0px', bottom: '-1px', borderLeft: '1.5px solid #ebebeb' }} />
                   )}
                   <div style={{ paddingTop: '12px' }}>
                     {renderNode(child, rootCommentId, false, depth === 2 ? 3 : depth + 1)}
@@ -392,14 +392,25 @@ useEffect(() => {
             </div>
           )}
 
-
-
-
+          {/* 답글 n개 / 답글 숨기기 버튼 */}
           {isRoot && hasChildren && (
-            <button onClick={() => setShowReplies(prev => ({ ...prev, [item.id]: !prev[item.id] }))}
-              style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', color: '#5c6bc0', fontWeight: '700', fontSize: '14px', padding: '8px 0', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              {showReplies[item.id] ? `▲ 답글 숨기기` : `▼ 답글 ${getAllRepliesCount(item.id)}개`}
-            </button>
+            <div style={{ position: 'relative', paddingTop: '4px' }}>
+              <div style={{
+                position: 'absolute',
+                left: LINE_LEFT,
+                top: `-${avatarSize + 10}px`,  // ✅ 아바타 바로 아래부터 시작
+                bottom: '15px',
+                width: LINE_WIDTH,
+                borderLeft: '1.5px solid #ebebeb',
+                borderBottom: '1.5px solid #ebebeb',
+                borderBottomLeftRadius: '22px'
+              }} />
+              <button
+                onClick={() => setShowReplies(prev => ({ ...prev, [item.id]: !prev[item.id] }))}
+                style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', color: '#5c6bc0', fontWeight: '700', fontSize: '14px', padding: '8px 0', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                {showReplies[item.id] ? `▲ 답글 숨기기` : `▼ 답글 ${getAllRepliesCount(item.id)}개`}
+              </button>
+            </div>
           )}
         </div>
       </div>
