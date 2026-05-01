@@ -346,8 +346,8 @@ useEffect(() => {
                 borderBottom: '1.5px solid #ebebeb',
                 borderBottomLeftRadius: '22px'
               }} />
-              {/* ✅ isRoot이면 답글 닫혀있어도 세로선 유지 */}
-              {(isRoot || (hasChildren && showChildren)) && (
+              {/* ✅ depth 2 미만일 때만 세로선 연장 */}
+              {depth < 2 && (isRoot || (hasChildren && showChildren)) && (
                 <div style={{ position: 'absolute', left: LINE_LEFT, top: '0px', bottom: '-12px', borderLeft: '1.5px solid #ebebeb' }} />
               )}
               <ReplyInput
