@@ -347,8 +347,8 @@ useEffect(() => {
                 borderBottomLeftRadius: '22px'
               }} />
               {/* ✅ isRoot이면 답글 닫혀있어도 세로선 유지 */}
-              {hasChildren && (showChildren || isRoot) && (
-                <div style={{ position: 'absolute', left: LINE_LEFT, top: '0px', bottom: '-1px', borderLeft: '1.5px solid #ebebeb' }} />
+              {(isRoot || (hasChildren && showChildren)) && (
+                <div style={{ position: 'absolute', left: LINE_LEFT, top: '0px', bottom: '-12px', borderLeft: '1.5px solid #ebebeb' }} />
               )}
               <ReplyInput
                 replyInputText={replyInputText}
