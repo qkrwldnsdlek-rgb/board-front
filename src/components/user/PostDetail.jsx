@@ -3,7 +3,7 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import api from '../../api';
 import { supabase } from '../../supabase';
 import 'react-quill-new/dist/quill.snow.css';
-import CommentSection from './CommentSection';
+import PostDetailComment from './PostDetailComment';
 
 function PostDetail() {
   const { id } = useParams();
@@ -135,7 +135,7 @@ function PostDetail() {
       </div>
 
       {/* ✅ 댓글 섹션 분리 */}
-      <CommentSection postId={id} user={user} profile={profile} isMobile={isMobile} />
+      <PostDetailComment postId={id} user={user} profile={profile} isMobile={isMobile} />
     </div>
   );
 }

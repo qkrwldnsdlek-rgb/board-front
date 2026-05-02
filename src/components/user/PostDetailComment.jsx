@@ -23,7 +23,7 @@ const ReplyInput = ({ replyInputText, setReplyInputText, onSubmit, onCancel, pro
   </div>
 );
 
-function CommentSection({ postId, user, profile, isMobile }) {
+function PostDetailComment({ postId, user, profile, isMobile }) {
   const navigate = useNavigate();
   const location = useLocation();
   const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
@@ -334,4 +334,4 @@ function CommentSection({ postId, user, profile, isMobile }) {
   );
 }
 
-export default CommentSection;
+export default PostDetailComment;
