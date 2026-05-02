@@ -1,49 +1,19 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import api from '../../api';
 import { supabase } from '../../supabase';
 import 'react-quill-new/dist/quill.snow.css';
-
-const ReplyInput = ({ replyInputText, setReplyInputText, onSubmit, onCancel, profile, user, getAvatar }) => (
-  <div style={{ display: 'flex', gap: '8px', marginTop: '12px', alignItems: 'flex-start' }}>
-    {getAvatar(profile?.nickname || user?.email, profile?.avatar_url)}
-    <div style={{ flex: 1, minWidth: 0 }}>
-      <input
-        value={replyInputText}
-        onChange={e => setReplyInputText(e.target.value)}
-        onKeyDown={e => e.key === 'Enter' && onSubmit()}
-        placeholder="답글 추가..."
-        style={{ width: '100%', padding: '8px 0', border: 'none', borderBottom: '2px solid #e0e0e0', outline: 'none', fontSize: '14px', boxSizing: 'border-box', backgroundColor: 'transparent' }}
-        autoFocus
-      />
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '8px' }}>
-        <button onClick={onCancel} style={{ backgroundColor: 'transparent', color: '#888', border: 'none', cursor: 'pointer', fontWeight: '600', fontSize: '13px', padding: '8px 12px', borderRadius: '20px' }}>취소</button>
-        <button onClick={onSubmit} style={{ backgroundColor: replyInputText.trim() ? '#5c6bc0' : '#e0e0e0', color: replyInputText.trim() ? '#fff' : '#999', border: 'none', cursor: 'pointer', fontWeight: '600', fontSize: '13px', padding: '8px 16px', borderRadius: '20px' }}>답글</button>
-      </div>
-    </div>
-  </div>
-);
+import CommentSection from './CommentSection';
 
 function PostDetail() {
   const { id } = useParams();
   const [post, setPost] = useState(null);
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
   const navigate = useNavigate();
   const location = useLocation();
-  const [showModal, setShowModal] = useState(false);
-
-  const [comments, setComments] = useState([]);
-  const [commentInput, setCommentInput] = useState('');
-  const [activeReplyId, setActiveReplyId] = useState(null);
-  const [replyInputText, setReplyInputText] = useState('');
-  const [replyTargetId, setReplyTargetId] = useState(null);
-  const [showReplies, setShowReplies] = useState({});
-  const [editingId, setEditingId] = useState(null);
-  const [editInput, setEditInput] = useState('');
-  const [profilesMap, setProfilesMap] = useState({});
-  const [lastSubmittedId, setLastSubmittedId] = useState(null);
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
 
   const category = new URLSearchParams(location.search).get('category') || '';
   const fromAdmin = new URLSearchParams(location.search).get('from') === 'admin';
@@ -51,7 +21,6 @@ function PostDetail() {
   const tab = new URLSearchParams(location.search).get('tab') || 'dashboard';
   const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
 
-  
   const goBack = () => {
     if (fromAdmin) navigate(`/admin?tab=${tab}`);
     else navigate(`/posts${categoryParam}`);
@@ -61,17 +30,6 @@ function PostDetail() {
     if (!url) return null;
     const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/);
     return match ? `https://www.youtube.com/embed/${match[1]}` : null;
-  };
-
-  const formatTimeAgo = (dateStr) => {
-    const now = new Date();
-    const date = new Date(dateStr.endsWith('Z') ? dateStr : dateStr + 'Z');
-    const diff = Math.floor((now - date) / 1000);
-    if (diff < 60) return '방금 전';
-    if (diff < 3600) return `${Math.floor(diff / 60)}분 전`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}시간 전`;
-    if (diff < 2592000) return `${Math.floor(diff / 86400)}일 전`;
-    return date.toLocaleDateString('ko-KR');
   };
 
   useEffect(() => {
@@ -92,331 +50,29 @@ function PostDetail() {
   }, []);
 
   useEffect(() => {
-    if (lastSubmittedId) {
-      const timer = setTimeout(() => setLastSubmittedId(null), 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [lastSubmittedId]);
-
-  const loadComments = useCallback(async () => {
-    const res = await api.get(`/comments/post/${id}`);
-    const commentList = res.data;
-    setComments(commentList);
-
-
-    //  console.log('전체:', commentList.length, '댓글만:', commentList.filter(c => !c.parentId).length);
-
-
-    const userIds = [...new Set(commentList.map(c => c.userId).filter(Boolean))];
-    if (userIds.length > 0) {
-      const { data: profiles } = await supabase.from('profiles').select('id, avatar_url').in('id', userIds);
-      if (profiles) {
-        const map = {};
-        profiles.forEach(p => { map[p.id] = p.avatar_url; });
-        setProfilesMap(map);
-      }
-    } else {
-      setProfilesMap({});
-    }
-  }, [id]);
-
-  useEffect(() => {
     api.get(`/posts/${id}`).then(res => setPost(res.data));
-    loadComments();
-  }, [id, loadComments]);
+  }, [id]);
 
   const handleDelete = async () => {
     if (!window.confirm('삭제하시겠습니까?')) return;
-
-    // 1. 본문 내 이미지 URL 추출
     const parser = new DOMParser();
     const doc = parser.parseFromString(post.content, 'text/html');
     const contentImages = [...doc.querySelectorAll('img')]
       .map(img => img.src)
       .filter(src => src.includes('board-images'));
-
-    // 2. 썸네일 이미지도 포함
     const allImageUrls = [...contentImages];
     if (post.imageUrl) allImageUrls.push(post.imageUrl);
-
-    // 3. Supabase Storage에서 삭제
     if (allImageUrls.length > 0) {
-      const filePaths = allImageUrls.map(url => {
-        // URL에서 파일 경로만 추출
-        const path = url.split('/storage/v1/object/public/board-images/')[1];
-        return path;
-      }).filter(Boolean);
-
+      const filePaths = allImageUrls.map(url =>
+        url.split('/storage/v1/object/public/board-images/')[1]
+      ).filter(Boolean);
       if (filePaths.length > 0) {
-        const { error } = await supabase.storage
-          .from('board-images')
-          .remove(filePaths);
+        const { error } = await supabase.storage.from('board-images').remove(filePaths);
         if (error) console.error('이미지 삭제 실패:', error);
       }
     }
-
-    // 4. 게시글 삭제
     await api.delete(`/posts/${id}`);
     goBack();
-  };
-
-  // 댓글 로드 후 스크롤
-useEffect(() => {
-  if (location.hash && comments.length > 0) {
-    const commentId = location.hash.replace('#comment-', '');
-    
-    // 해당 댓글의 루트 댓글 찾아서 답글 펼치기
-    const comment = comments.find(c => String(c.id) === commentId);
-    if (comment) {
-      // 부모를 타고 올라가서 루트 찾기
-      let rootId = comment.id;
-      let current = comment;
-      while (current.parentId) {
-        current = comments.find(c => c.id === current.parentId);
-        if (current) rootId = current.id;
-      }
-      // 루트 댓글 답글 펼치기
-      setShowReplies(prev => ({ ...prev, [rootId]: true }));
-    }
-
-    // 펼친 후 스크롤
-    setTimeout(() => {
-      const el = document.querySelector(location.hash);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 300);
-  }
-}, [comments]);
-
-
-  const handleCommentSubmit = async () => {
-    if (!commentInput.trim()) return;
-    if (!user) { alert('로그인이 필요합니다.'); return; }
-    const res = await api.post('/comments', {
-      postId: parseInt(id), content: commentInput,
-      author: profile?.nickname || user.email, userId: user.id, parentId: null,
-    });
-    if (res.data?.id) setLastSubmittedId(res.data.id);
-    setCommentInput('');
-    loadComments();
-  };
-
-  const handleReplySubmit = async (rootCommentId) => {
-    if (!replyInputText.trim()) return;
-    if (!user) { alert('로그인이 필요합니다.'); return; }
-    const res = await api.post('/comments', {
-      postId: parseInt(id), content: replyInputText,
-      author: profile?.nickname || user.email, userId: user.id, parentId: replyTargetId,
-    });
-    if (res.data?.id) setLastSubmittedId(res.data.id);
-    setActiveReplyId(null);
-    setReplyInputText('');
-    setReplyTargetId(null);
-    setShowReplies(prev => ({ ...prev, [rootCommentId]: true }));
-    loadComments();
-  };
-
-  const handleCommentDelete = async (commentId) => {
-    if (!window.confirm('댓글을 삭제하시겠습니까?')) return;
-    await api.delete(`/comments/${commentId}`);
-    loadComments();
-  };
-
-  const handleCommentEdit = async (commentId) => {
-    await api.put(`/comments/${commentId}`, { content: editInput });
-    setLastSubmittedId(commentId);
-    setEditingId(null);
-    loadComments();
-  };
-
-  const handleLike = async (commentId) => {
-    if (!user) { alert('로그인이 필요합니다.'); return; }
-    await api.post(`/comments/${commentId}/like?userId=${user.id}`);
-    loadComments();
-  };
-
-  // 모바일에서 아바타 크기 줄이기
-  const avatarSize = isMobile ? 28 : 36;
-  const AVATAR_GAP = isMobile ? 8 : 12;
-  const LINE_LEFT = `-${8 + AVATAR_GAP + avatarSize / 2}px`;   // padding(8) + gap + 아바타 중앙
-  const LINE_WIDTH = `${AVATAR_GAP + avatarSize / 2 - 4}px`;   // 세로선 → 자식 아바타 왼쪽까지
-
-  const getAvatar = (author, avatarUrl) => (
-    avatarUrl ? (
-      <img src={avatarUrl} alt={author} style={{ width: avatarSize, height: avatarSize, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-    ) : (
-      <div style={{ width: avatarSize, height: avatarSize, borderRadius: '50%', backgroundColor: '#5c6bc0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: isMobile ? 12 : 15, color: '#fff', fontWeight: 700, flexShrink: 0 }}>
-        {author?.[0]?.toUpperCase() || '?'}
-      </div>
-    )
-  );
-
-  const parentComments = comments.filter(c => !c.parentId);
-  
-
-  const getDirectReplies = (parentId) => comments.filter(c => c.parentId === parentId);
-  const getAllDescendants = (commentId) => {
-    const result = [];
-    const collect = (pid) => {
-      const children = comments.filter(c => c.parentId === pid);
-      children.forEach(child => { result.push(child); collect(child.id); });
-    };
-    collect(commentId);
-    return result;
-  };
-  const getAllRepliesCount = (commentId) => getAllDescendants(commentId).length;
-
-  const totalCount = parentComments.length + parentComments.reduce((acc, c) => acc + getAllRepliesCount(c.id), 0);
-
-  const ActionButtons = ({ item, rootCommentId, isRoot = false, depth = 0 }) => (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '2px', flexWrap: 'wrap', marginLeft: '-8px' }}>
-      <button onClick={() => handleLike(item.id)} style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '14px', color: '#666', display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 8px', borderRadius: '20px' }}>
-        👍 {item.likeCount > 0 && <span style={{ fontSize: '12px' }}>{item.likeCount}</span>}
-      </button>
-      <button style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '14px', color: '#666', padding: '6px 8px', borderRadius: '20px' }}>👎</button>
-      {user && (
-        <button onClick={() => { setActiveReplyId(item.id); setReplyInputText(isRoot ? '' : `@${item.author} `); setReplyTargetId(item.id); }}
-          style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: '700', color: '#3f3f3f', padding: '6px 12px', borderRadius: '20px' }}>답글</button>
-      )}
-      {user && (user.id === item.userId || user.email === ADMIN_EMAIL) && (
-        <>
-          <button onClick={() => { setEditingId(item.id); setEditInput(item.content); }}
-            style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '13px', color: '#888', padding: '6px 8px', borderRadius: '20px' }}>수정</button>
-          <button onClick={() => handleCommentDelete(item.id)}
-            style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '13px', color: '#e57373', padding: '6px 8px', borderRadius: '20px' }}>삭제</button>
-        </>
-      )}
-    </div>
-  );
-
-  const renderNode = (item, rootCommentId, isRoot = false, depth = 0) => {
-    const children = getDirectReplies(item.id);
-    const hasChildren = children.length > 0;
-    const showChildren = isRoot ? showReplies[item.id] : true;
-    const isNew = String(item.id) === String(lastSubmittedId);
-
-    return (
-      <div id={`comment-${item.id}`} style={{ display: 'flex', gap: `${AVATAR_GAP}px`, position: 'relative' }}>
-        <div style={{ flexShrink: 0, width: `${avatarSize}px`, zIndex: 1 }}>
-          {getAvatar(item.author, profilesMap[item.userId])}
-        </div>
-
-        <div
-          className={isNew ? 'new-comment-flash' : ''}
-          style={{ flex: 1, minWidth: 0, padding: '4px 8px', borderRadius: '12px', transition: 'background-color 1s ease-out', backgroundColor: isNew ? 'rgba(92, 107, 192, 0.1)' : 'transparent' }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
-            <span style={{ fontWeight: '700', fontSize: isMobile ? '12px' : '13px', color: '#3f3f3f' }}>@{item.author}</span>
-            <span style={{ fontSize: isMobile ? '11px' : '12px', color: '#aaa' }}>
-              {formatTimeAgo(item.createdAt)}
-              {item.updatedAt && 
-              Math.floor(new Date(item.updatedAt).getTime() / 1000) !== Math.floor(new Date(item.createdAt).getTime() / 1000) && (
-                <span style={{ marginLeft: '6px', fontSize: '11px', color: '#bbb' }}>(수정됨)</span>
-              )}
-            </span>
-          </div>
-
-          {editingId === item.id ? (
-            <div style={{ marginBottom: '8px' }}>
-              <input value={editInput} onChange={e => setEditInput(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && handleCommentEdit(item.id)}
-                style={{ width: '100%', padding: '6px 0', border: 'none', borderBottom: '2px solid #5c6bc0', outline: 'none', fontSize: '14px', boxSizing: 'border-box', backgroundColor: 'transparent' }}
-                autoFocus />
-              <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                <button onClick={() => setEditingId(null)} style={{ backgroundColor: 'transparent', color: '#888', border: 'none', cursor: 'pointer', fontWeight: '600', fontSize: '13px', padding: '6px 12px', borderRadius: '20px' }}>취소</button>
-                <button onClick={() => handleCommentEdit(item.id)} style={{ backgroundColor: '#5c6bc0', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: '600', fontSize: '13px', padding: '6px 16px', borderRadius: '20px' }}>저장</button>
-              </div>
-            </div>
-          ) : (
-            <>
-              <p style={{ fontSize: '14px', color: '#444', margin: '0 0 8px', wordBreak: 'break-word', overflowWrap: 'break-word' }}>{item.content}</p>
-              <ActionButtons item={item} rootCommentId={rootCommentId} isRoot={isRoot} depth={depth} />
-            </>
-          )}
-
-          {/* 답글 입력창 */}
-          {activeReplyId === item.id && (
-            <div style={{ position: 'relative', marginTop: '12px', paddingTop: '12px' }}>
-              <div style={{
-                position: 'absolute',
-                left: LINE_LEFT,
-                top: `${-(avatarSize + AVATAR_GAP)}px`,
-                bottom: `${avatarSize / 2 + 38}px`,
-                width: LINE_WIDTH,
-                borderLeft: '1.5px solid #ebebeb',
-                borderBottom: '1.5px solid #ebebeb',
-                borderBottomLeftRadius: '22px'
-              }} />
-              {/* ✅ depth 3 미만일 때만 세로선 연장 */}
-              {depth < 3 && hasChildren && (isRoot || showChildren) && (
-                <div style={{ position: 'absolute', left: LINE_LEFT, top: '0px', bottom: '-12px', borderLeft: '1.5px solid #ebebeb' }} />
-              )}
-              <ReplyInput
-                replyInputText={replyInputText}
-                setReplyInputText={setReplyInputText}
-                onSubmit={() => handleReplySubmit(rootCommentId)}
-                onCancel={() => { setActiveReplyId(null); setReplyInputText(''); setReplyTargetId(null); }}
-                profile={profile}
-                user={user}
-                getAvatar={getAvatar}
-              />
-            </div>
-          )}
-
-          {/* 자식 댓글 */}
-          {hasChildren && showChildren && depth < 3 && (
-            <div style={{ marginTop: '12px' }}>
-              {(depth === 2
-                ? getAllDescendants(item.id).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
-                : children
-              ).map((child, index, arr) => (
-                <div key={child.id} style={{ position: 'relative' }}>
-                  <div style={{
-                    position: 'absolute',
-                    left: LINE_LEFT,
-                    top: '-51px',
-                    width: LINE_WIDTH,
-                    height: '82px',
-                    borderLeft: '1.5px solid #ebebeb',
-                    borderBottom: '1.5px solid #ebebeb',
-                    borderBottomLeftRadius: '22px'
-                  }} />
-                  {/* ✅ root의 자식이면 마지막도 연장, 2depth 이상이면 마지막에서 끊김 */}
-                  {(index !== arr.length - 1 || isRoot) && (
-                    <div style={{ position: 'absolute', left: LINE_LEFT, top: '0px', bottom: '-4px', borderLeft: '1.5px solid #ebebeb' }} />
-                  )}
-                  <div style={{ paddingTop: '12px' }}>
-                    {renderNode(child, rootCommentId, false, depth === 2 ? 3 : depth + 1)}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* 답글 n개 / 답글 숨기기 버튼 */}
-          {isRoot && hasChildren && (
-            <div style={{ position: 'relative', paddingTop: '4px' }}>
-              <div style={{
-                position: 'absolute',
-                left: LINE_LEFT,
-                // ✅ 펼쳐진 상태: 마지막 자식에서 이어받음 (top: 0)
-                // ✅ 접힌 상태: 아바타 아래부터 시작
-                top: showChildren ? '-4px' : `-${avatarSize + 4}px`,
-                bottom: '15px',
-                width: LINE_WIDTH,
-                borderLeft: '1.5px solid #ebebeb',
-                borderBottom: '1.5px solid #ebebeb',
-                borderBottomLeftRadius: '22px'
-              }} />
-              <button
-                onClick={() => setShowReplies(prev => ({ ...prev, [item.id]: !prev[item.id] }))}
-                style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', color: '#5c6bc0', fontWeight: '700', fontSize: '14px', padding: '8px 0', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                {showReplies[item.id] ? `▲ 답글 숨기기` : `▼ 답글 ${getAllRepliesCount(item.id)}개`}
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    );
   };
 
   if (!post) return <div style={{ textAlign: 'center', marginTop: '100px', color: '#aaa' }}>로딩중...</div>;
@@ -437,8 +93,6 @@ useEffect(() => {
           style={{ padding: 0, fontSize: '16px', lineHeight: '1.9', minHeight: '200px', wordBreak: 'break-word' }}
         />
 
-        
-        {/* 유튜브 */}
         {post.youtubeUrl && getYoutubeEmbedUrl(post.youtubeUrl) && (
           <div style={{ marginBottom: '32px' }}>
             <iframe key={post.youtubeUrl} width="100%" height={isMobile ? '220' : '450'}
@@ -448,14 +102,11 @@ useEffect(() => {
           </div>
         )}
 
-        {/* 대표 이미지 */}
         {post.imageUrl && (
           <>
             <hr style={{ border: 'none', borderTop: '1px solid #f0f0f0', margin: '32px 0' }} />
             <div style={{ marginBottom: '32px' }}>
-              <p style={{ fontSize: '14px', fontWeight: '600', color: '#888', marginBottom: '12px' }}>
-                📎 대표 이미지
-              </p>
+              <p style={{ fontSize: '14px', fontWeight: '600', color: '#888', marginBottom: '12px' }}>📎 대표 이미지</p>
               <img src={post.imageUrl} alt="첨부 이미지" onClick={() => setShowModal(true)}
                 style={{ maxWidth: '40%', maxHeight: '200px', objectFit: 'contain', cursor: 'zoom-in', boxShadow: '0 2px 12px rgba(0,0,0,0.1)', borderRadius: '12px' }} />
             </div>
@@ -483,37 +134,8 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* 댓글 섹션 */}
-      <div style={{ backgroundColor: '#fff', borderRadius: '20px', boxShadow: '0 2px 16px rgba(0,0,0,0.08)', padding: isMobile ? '16px' : '40px', marginTop: '16px', overflow: 'hidden' }}>
-        {/* <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#3f3f3f', marginBottom: '24px' }}>댓글 {parentComments.length}개</h2> */}
-        <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#3f3f3f', marginBottom: '24px' }}>댓글 {totalCount}개</h2>
-        {user ? (
-          <div style={{ display: 'flex', gap: `${AVATAR_GAP}px`, marginBottom: '32px', alignItems: 'flex-start' }}>
-            {getAvatar(profile?.nickname || user.email, profile?.avatar_url)}
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <input value={commentInput} onChange={e => setCommentInput(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && handleCommentSubmit()}
-                placeholder="댓글 추가..."
-                style={{ width: '100%', padding: '8px 0', outline: 'none', fontSize: '14px', boxSizing: 'border-box', border: 'none', borderBottom: '2px solid #e0e0e0', backgroundColor: 'transparent' }} />
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '8px' }}>
-                <button onClick={() => setCommentInput('')} style={{ backgroundColor: 'transparent', color: '#888', border: 'none', cursor: 'pointer', fontWeight: '600', fontSize: '13px', padding: '8px 12px', borderRadius: '20px' }}>취소</button>
-                <button onClick={handleCommentSubmit} style={{ backgroundColor: commentInput.trim() ? '#5c6bc0' : '#e0e0e0', color: commentInput.trim() ? '#fff' : '#999', border: 'none', cursor: 'pointer', fontWeight: '600', fontSize: '13px', padding: '8px 16px', borderRadius: '20px' }}>댓글</button>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div style={{ textAlign: 'center', padding: '20px', color: '#999', fontSize: '14px', marginBottom: '24px', backgroundColor: '#f8f9ff', borderRadius: '12px' }}>
-            <span onClick={() => navigate('/login')} style={{ color: '#5c6bc0', cursor: 'pointer', fontWeight: '600' }}>로그인</span> 후 댓글을 작성할 수 있습니다.
-          </div>
-        )}
-
-        {/* 각 댓글 overflow hidden으로 선 삐져나옴 방지 */}
-        {parentComments.map(comment => (
-          <div key={comment.id} style={{ marginBottom: '24px', overflow: 'hidden' }}>
-            {renderNode(comment, comment.id, true)}
-          </div>
-        ))}
-      </div>
+      {/* ✅ 댓글 섹션 분리 */}
+      <CommentSection postId={id} user={user} profile={profile} isMobile={isMobile} />
     </div>
   );
 }
